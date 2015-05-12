@@ -13,10 +13,13 @@ gitinit
 touch readme.txt
 gedit readme.txt
 
+gitstatus//显示改动
+
 git add filename
+gitstatus
 git commit -m "detail of the change"
 
-git status//显示改动
+git status
 
 */
 
