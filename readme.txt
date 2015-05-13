@@ -23,4 +23,6 @@ git status
 
 */
 
+git is free software distirbuted under the GPL.
+
 
