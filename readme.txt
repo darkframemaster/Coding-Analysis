@@ -23,6 +23,6 @@ git status
 
 */
 
-git is free software distirbuted under the GPL.
+now i add this line.
 
 
