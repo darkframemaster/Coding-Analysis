@@ -1,0 +1,55 @@
+<>中表示参数
+git//查看是否有git可用
+sudo apt-get install git				//ubuntu安装git
+git --version						//git版本
+git config --global user.name "yourname"		//yourname是你的名字
+git config --global user.email "email@example.com"	//email@example.com是你的邮箱
+
+//git别名设置
+//所有用户都能使用别名
+sudo git config --system alias.st status
+sudo git config --system alias.ci commit
+sudo git config --system alias.co checkout
+sudo git config --system alias.br branch
+//只在本用户的全局配置中使用别名
+git config --global alias.st status
+git config --global alias.ci commit
+git config --global alias.co checkout
+git config --global alias.br branch
+
+git config --global color.ui true			//在git命令输出中开启颜色显示
+
+git init		//初始化当前文件夹为git工作区
+git init filename	//初始化一个叫filename的工作区在当前文件夹下		
+//在工作区中会生成一个叫.git的文件夹 我们称之为git版本库
+git add <filename>	//添加文件到咱存区 可反复使用添加多个文件
+git commit -m "changes"	//添加改动说明 "changes"为本次添加的改动 建议每次都写 只有在完成git add以及git commit之后才算真真完成改动
+git status		//仓库当前的状况，文件的修改情况
+git diff filename 	//查看文件的改动内容
+git log			//查看文件的历史版本 以及commit_id
+git reset --hard commit_id	//然文件回到commit_id的版本
+git reflog		//查看文件的历史版本 比较强大
+
+git grep 			//查看文件内容
+git grep "工作区文件内容搜索"	//文件内容搜索
+
+git config -e			//打开.git/config文件进行编辑，在工作区下执行该命令
+git config -e --global		//打开/home/xuehao/.gitconfig(用户主目录下的.gitconfig文件)全局配置文件进行编辑。
+git config -e --system		//打开/etc/gitconfig系统级配置文件进行比编辑，如果Git安装在非标准位置，则这个系统级的配置文件也可能是在另外的位置。
+//版本库级别的配置文件的优先级最高，全局配置文件次之，系统级配置文件优先级最低。git配置文件都是INI文件格式。
+git config core.dare		//查看ini文件中care小节的dare值
+git config a.b something	//设置ini文件下的a小节的b值为something
+git config x.y.z others		//[x "y"]小节的z值为others
+GIT_CONFIG=test.ini git config a.b.c.d "hello world"	//向配置文件test.ini中添加配置
+
+git config user.name		//显示用户名
+git config user.email		//显示用户邮箱
+git config --unset --global user.name	//删除用户名
+git config --unset --global user.email	//删除用户邮箱
+
+
+//不常用的
+strace -e 'trace=file' git *	//跟踪这条git命令的磁盘访问。
+git rev-parse --git-dir		//显示版本库.git目录所在的位置
+git rev-parse --show-toplevel   //显示工作区的根目录
+git rev-parse --show-cdup	//显示从当前目录（cd）后退（up）到工作区的根的深度。
