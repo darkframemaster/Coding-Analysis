@@ -15,10 +15,23 @@
 `git commit -m "changes"`	//添加改动说明 "changes"为本次添加的改动 建议每次都写     **只有在完成git add以及git commit之后才算真真完成改动,每一个commit操作都非常非常的重要**                                                                                                                                                                                                                          
 `git status`		//仓库当前的状况，文件的修改情况                                             
 `git diff filename` 	//查看文件的改动内容                                                    
-`git log`			//查看文件的历史版本 以及commit_id                                                             
-`git reset --hard commit_id`	//然文件回到commit_id的版本                                                                                
+`git checkout -- filename`//撤销工作区的修改 **--后面有一个空格**                                                                                                                                                                                                                                       
+`git reset HEAD filename`//撤销暂存区的修改，完了之后还得撤销工作区的修改才能彻底退回                                                                                                                                                                            
+`git reset --hard commit_id`	//让文件回到commit_id的版本，撤销操作的终极操作                                                                                                                                                                                                                                              
+`git log`			//查看文件的历史版本 以及commit_id                                                                                   
 `git reflog`		//查看文件的历史版本 比较强大                                                                         
- 
+`git rm filename` //从版本库中删除文件filename，记得git commit
+`git checkout -- filename` //文件删错拉。。。用git checkout搞定**git checkout其实是用版本库里的版本替换工作区的版本无论是修改还是删除都可以一键还原**
+
+##git and github
+>*github我们的远程仓库* 
+                                                                                                                                                                                               
+注册github什么的我就不说了。直接进入ssh密钥设置。你的本地git仓库和github仓库之间的传输是通过ssh加密的，所以，需要一点设置：                                                                                                         
+1. 创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：                                                                                                                                                                          
+`$ssh -keygen -t rsa -C "youremail@example.com"`                                                                                                        
+2. 登陆GitHub，打开“Account settings”，“SSH Keys”页面：然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容                                                                                                                             
+**出现ssh: connect to host github.com port 22: Connection refused请参考**[darkframexue](http://www.jianshu.com/writer#/notebooks/1141614/notes/1513755/preview)
+
 ###git grep
 `git grep` 			//查看文件内容                                                                                                                                                      
 `git grep` "工作区文件内容搜索"	//文件内容搜索                                                                                                       
