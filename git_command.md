@@ -18,7 +18,9 @@
 `git checkout -- filename`//撤销工作区的修改 **--后面有一个空格**                                                                                                                                                                                                                                       
 `git reset HEAD filename`//撤销暂存区的修改，完了之后还得撤销工作区的修改才能彻底退回                                                                                                                                                                            
 `git reset --hard commit_id`	//让文件回到commit_id的版本，撤销操作的终极操作                                                                                                                                                                                                                                              
-`git log`			//查看文件的历史版本 以及commit_id                                                                                   
+`git log`			//查看文件的历史版本 以及commit_id                                 
+`git log --pretty=oneline`//                                                                                                        
+`git log --graph --pretty=oneline --abbrev-commit`//                                                
 `git reflog`		//查看文件的历史版本 比较强大                                                                         
 `git rm filename` //从版本库中删除文件filename，记得git commit
 `git checkout -- filename` //文件删错拉。。。用git checkout搞定**git checkout其实是用版本库里的版本替换工作区的版本无论是修改还是删除都可以一键还原**
@@ -29,14 +31,44 @@
 注册github什么的我就不说了。直接进入ssh密钥设置。你的本地git仓库和github仓库之间的传输是通过ssh加密的，所以，需要一点设置：                                                                                                         
 1. 创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：                                                                                                                                                                          
 `$ssh -keygen -t rsa -C "youremail@example.com"`                                                                                                        
-2. 登陆GitHub，打开“Account settings”，“SSH Keys”页面：然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容                                                                                                                             
+2. 登陆GitHub，打开“Account settings”，“SSH Keys”页面：然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴**id_rsa.pub**文件的内容                                                                                                                             
 **出现ssh: connect to host github.com port 22: Connection refused请参考**[darkframexue](http://www.jianshu.com/writer#/notebooks/1141614/notes/1513755/preview)
 
-###git grep
+###git push and clone
+>从本地到远程库
+
+在github上创建一个叫作*repository*的仓库,打开终端执行下列操作.
+`cd /path/to/your/workspace`//进入本地仓库                                                                                                                                                                                                                                                                                                                   
+`git remote add origin git@github.com:yourname/repositoryname.git`//进行本地仓库与远程仓库的关联 **yourname是你的用户名，repositoryname是你的远程仓库的名字。**                                                                         
+`git push -u origin master`**origin is name of the github**                                                                                                                                                                                                                     
+`git push -u gitcafe master`//push to gitcafe                                                                                                                                                           
+`git push origin master`**only the first push need -u**                                                                                                                                                             
+>从远程库到本地     
+                                                                                                                                                                                                                   
+create a new repository name as "whateveryoulike"**whateveryoulike is the repository name**                                                                                                                             
+and you can choose *Initialize this repository with a README* to add a README.md file **README.md ask you use markdown to write in** [helpfor_markdown](www.baidu.com)                                                                             
+`git clone git@github.com:yourname/repositoryname.git`//clone a repository in your computer                                                                                                                                     
+                                                                                                                                                                             
+##git branch
+`git branch`//show the branches                                                                                                                                     
+`git branch branchname`//create a new branch                                                                                                                                                                        
+`git checkout branchname`//move to the branch named as branchname                                                                                                                       
+`git checkout -b branchname`//create a new branch and move to it                                                                                                                                                
+`git merge branchname`//合并branchname分支到**当前分支上（master）**                                                                                                                        
+`git branch -d branchname`//delete the branch named as branchname                                                                                                                                                                   
+通常，合并分支时，如果可能，git会用fast forward模式，但在这种模式下，删除分支后，会丢掉分支信息。如果要强制禁用fast forward模式，git就会在**（merge）合并**时生成一个新的**commit**，这样，从分支历史上就能看出分支信息。                                                                           
+>用--no-ff方式的gitmerge：
+
+`git merge --no-ff -m “merge with no-ff” branchname`//`--no-ff` forbit fast *Forward* `-m` include commit
+
+
+                                                                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                                   
+##git grep
 `git grep` 			//查看文件内容                                                                                                                                                      
 `git grep` "工作区文件内容搜索"	//文件内容搜索                                                                                                       
 
-###git config
+##git config
 `git config -e`			//打开.git/config文件进行编辑，在工作区下执行该命令                                                                      
 `git config -e --global`		//打开/home/xuehao/.gitconfig(用户主目录下的.gitconfig文件)全局配置文件进行编辑。                                                                                                                                                                                                                                   
 `git config -e --system`		//打开/etc/gitconfig系统级配置文件进行比编辑，如果Git安装在非标准位置，则这个系统级的配置文件也可能是在另外的位置。                                                                                                                                                                           
@@ -51,7 +83,7 @@
 `git config --unset --global user.name	`//删除用户名                                                                   
 `git config --unset --global user.email`	//删除用户邮箱                                                                                 
                                             
-####git别名设置
+##git别名设置
 *所有用户都能使用别名*                                                                                                                                
 `sudo git config --system alias.st status`                                                                                                                     
 `sudo git config --system alias.ci commit`                                                                                                                                                                    
@@ -62,7 +94,7 @@
 `git config --global alias.ci commit`                                                                                                                       
 `git config --global alias.co checkout`                                                                                             
 `git config --global alias.br branch`         
-####不常用的                                                                                                                      
+###不常用的                                                                                                                      
 `strace -e 'trace=file' git *`	//跟踪这条git命令的磁盘访问。                                                                                  
 `git rev-parse --git-dir`		//显示版本库.git目录所在的位置                                                                 
 `git rev-parse --show-toplevel`   //显示工作区的根目录                                                                                         
