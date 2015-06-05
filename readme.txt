@@ -28,3 +28,4 @@ git status
 
 what will happen...
 
+which opengl
