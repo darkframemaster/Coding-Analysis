@@ -39,10 +39,12 @@
 
 在github上创建一个叫作*repository*的仓库,打开终端执行下列操作.
 `cd /path/to/your/workspace`//进入本地仓库                                                                                                                                                                                                                                                                                                                   
-`git remote add origin git@github.com:yourname/repositoryname.git`//进行本地仓库与远程仓库的关联 **yourname是你的用户名，repositoryname是你的远程仓库的名字。**                                                                         
-`git push -u origin master`**origin is name of the github**                                                                                                                                                                                                                     
+`git remote add origin git@github.com:yourname/repositoryname.git`//进行本地仓库与远程仓库的关联
+**yourname是你的用户名，repositoryname是你的远程仓库的名字。**                                                       
+`git remote add gitcaffe@gitcaffe.com:yourname/repositoryname.git`//当然可以选择中国的git caffe                 
+`git push -u origin master`//**origin is name of the github**                                                                                                                                                                                                                     
 `git push -u gitcafe master`//push to gitcafe                                                                                                                                                           
-`git push origin master`**only the first push need -u**                                                                                                                                                             
+`git push origin master`//**only the first push need -u**                                                                                                                                                             
 >从远程库到本地     
                                                                                                                                                                                                                    
 create a new repository name as "whateveryoulike"**whateveryoulike is the repository name**                                                                                                                             
@@ -56,12 +58,48 @@ and you can choose *Initialize this repository with a README* to add a README.md
 `git checkout -b branchname`//create a new branch and move to it                                                                                                                                                
 `git merge branchname`//合并branchname分支到**当前分支上（master）**                                                                                                                        
 `git branch -d branchname`//delete the branch named as branchname                                                                                                                                                                   
+
 通常，合并分支时，如果可能，git会用fast forward模式，但在这种模式下，删除分支后，会丢掉分支信息。如果要强制禁用fast forward模式，git就会在**（merge）合并**时生成一个新的**commit**，这样，从分支历史上就能看出分支信息。                                                                           
 >用--no-ff方式的gitmerge：
 
 `git merge --no-ff -m “merge with no-ff” branchname`//`--no-ff` forbit fast *Forward* `-m` include commit
 
+##git  bug
+`git stash//把当前工作现场“储存”起来。
 
+`git checkout wherebugis`//切换到bug所在分支
+
+`git checkout -b Fixbug-101`//创建一个bug修复分区，切换到该分区
+
+。。。//修复bug
+
+`git add bugfile`
+
+`git commit -m “fix bug 101”
+
+`git checkout master`//修复完成后回到master分区
+
+`git merge --no-ff -m “merge bug fix 101” Fixbug-101`//合并分区
+
+`git branch -d Fixbug-101`//删除分区
+
+`git checkout dev`//回到dev分区接着。。。
+
+`git status`//看看刚才的stash是否成功啦，并没有发现有什么修改，难道没有保存？
+
+`git stash list`//查看stash的列表，工作现场还在只是被git存到什么地方去了，需要恢复一下
+
+`git stash pop`//回复的同时把stash的内容删除
+
+`git stash list`//好了什么也没有了
+
+`git stash apply`//恢复而不清除stash
+
+`git stash drop`//配合`git stash apply使用，删除stash
+
+如果有多次stash，恢复的时候，先用`git stash list`查看，然后恢复指定的文件：
+
+`git stash apply stash@{0}`//恢复指定的stash对象
                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                    
 ##git grep
