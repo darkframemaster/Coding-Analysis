@@ -29,7 +29,7 @@
 >*github我们的远程仓库* 
                                                                                                                                                                                                
 注册github什么的我就不说了。直接进入ssh密钥设置。你的本地git仓库和github仓库之间的传输是通过ssh加密的，所以，需要一点设置：                                                                                                         
-1. 创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：                                                                                                                                                                          
+1. 创建SSH Key。在用户**主目录**下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：                                                                                                                                                                          
 `$ssh -keygen -t rsa -C "youremail@example.com"`                                                                                                        
 2. 登陆GitHub，打开“Account settings”，“SSH Keys”页面：然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴**id_rsa.pub**文件的内容                                                                                                                             
 **出现ssh: connect to host github.com port 22: Connection refused请参考**[darkframexue](http://www.jianshu.com/writer#/notebooks/1141614/notes/1513755/preview)
@@ -43,7 +43,7 @@
 **yourname是你的用户名，repositoryname是你的远程仓库的名字。**                                                       
 `git remote add gitcaffe@gitcaffe.com:yourname/repositoryname.git`//当然可以选择中国的git caffe                 
 `git push -u origin master`//**origin is name of the github**                                                                                                                                                                                                                     
-`git push -u gitcafe master`//push to gitcafe                                                                                                                                                           
+`git push -u gitcafe master`//**push to git caffe** gitcafe                                                                                                                                                           
 `git push origin master`//**only the first push need -u**                                                                                                                                                             
 >从远程库到本地     
                                                                                                                                                                                                                    
@@ -95,18 +95,110 @@ and you can choose *Initialize this repository with a README* to add a README.md
 
 `git stash apply`//恢复而不清除stash
 
-`git stash drop`//配合`git stash apply使用，删除stash
+`git stash drop`//配合`git stash apply`使用，删除stash
 
 如果有多次stash，恢复的时候，先用`git stash list`查看，然后恢复指定的文件：
 
 `git stash apply stash@{0}`//恢复指定的stash对象
                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                   
+##git for us
+###push
+`git remote`//查看远程库的信息
+
+`git remote -v`//显示更详细的信息
+
+`git push origin branch_name`//推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上.
+
+但是，并不是一定要把本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？
+
+* master分支是主分支，因此要时刻与远程同步；
+
+* dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
+
+* bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
+
+* feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发。
+
+###catch
+现在以**你的小伙伴**的身份从远程库clone：记得添加他的SSH密钥到你的git。
+
+`git clone git@github.com:darkframexue/learngit`
+
+`git branch`//当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的master分支。                                                                                                                                                                                                                                                                                                   
+
+`git checkout -b dev origin/dev`//创建远程origin的dev分支到本地
+
+`git add filename`
+
+`git commit -m "information"`
+
+`git push origin dev`
+
+//你的小伙伴已经向origin/dev分支推送了他的提交，而碰巧**你**也对同样的文件作了修改，并试图推送：
+`git add filename`
+
+`git commit -m "information"`
+
+`git push origin dev`//推送失败,推送的提交有冲突，解决办法也很简单，Git已经提示我们，先用git pull把最新的提交从origin/dev抓下来，然后，在本地合并，解决冲突，再推送：
+
+`git pull`//也失败了，原因是没有指定本地dev分支与远程origin/dev分支的链接，根据提示，设置dev和origin/dev的链接.
+
+`git branch --set-upstream dev origin/dev`//设置dev和origin/dev的链接.
+
+`git pull`//OK
+
+####多人协作的工作模式通常是这样：
+
+1.    首先，可以试图用git push origin branch-name推送自己的修改；
+
+2.    如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+
+3.    如果合并有冲突，则解决冲突，并在本地提交；
+
+4.    没有冲突或者解决掉冲突后，再用git push origin branch-name推送就能成功！
+
+如果git pull提示“no tracking information”，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream branch-name origin/branch-name。
+
+
+##标签
+###创建标签
+创建标签--git的版本名牌
+`git branch`
+
+`git checkout branch_name`//切换到需要打标签的分支上
+
+`git tag v1.0`//敲命令git tag <name>就可以打一个新标签,**默认标签是打在最新提交的commit上的。**
+
+`git tag v1.1 commit_id`//在对应的commit_id处贴上标签。
+
+`git tag -a v1.2 -m "vertion 1.2 released" commit_id`创建带有说明的标签，用-a指定标签名，-m指定说明文字.
+
+`git tag -s v1.3 -m "signed version 1.3 released" commit_id`//通过-s用私钥签名一个标签
+
+`git tag`//查看所有标签
+
+**注意**，标签不是按时间顺序列出，而是按字母排序的。可以用git show <tagname>查看标签信息
+`git show v1.0`//查看标签信息
+
+###操作标签
+因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+`git tag -d v1.0`//标签打错了，也可以删除
+
+`git push origin v1.0`//推送某个标签到远程
+
+`git push origin --tag`//一次性推送全部尚未推送到远程的本地标签
+
+要删除远程标签就麻烦一点，先从本地删除
+`git tag -d v1.0`
+
+`git push origin:refs/tags/v1.0`//从远程删除。删除命令也是push.
+
 ##git grep
 `git grep` 			//查看文件内容                                                                                                                                                      
 `git grep` "工作区文件内容搜索"	//文件内容搜索                                                                                                       
 
 ##git config
+`git config --global color.ui true`//让Git显示颜色，会让命令输出看起来更醒目
 `git config -e`			//打开.git/config文件进行编辑，在工作区下执行该命令                                                                      
 `git config -e --global`		//打开/home/xuehao/.gitconfig(用户主目录下的.gitconfig文件)全局配置文件进行编辑。                                                                                                                                                                                                                                   
 `git config -e --system`		//打开/etc/gitconfig系统级配置文件进行比编辑，如果Git安装在非标准位置，则这个系统级的配置文件也可能是在另外的位置。                                                                                                                                                                           
