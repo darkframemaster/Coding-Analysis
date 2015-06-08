@@ -224,6 +224,21 @@ and you can choose *Initialize this repository with a README* to add a README.md
 `git config --global alias.ci commit`                                                                                                                       
 `git config --global alias.co checkout`                                                                                             
 `git config --global alias.br branch`         
+
+##git .gitignore
+有些时候，你必须把某些文件放到Git工作目录中，但又不能提交它们，比如保存了数据库密码的配置文件啦，等等，每次git status都会显示Untracked files ...，有强迫症的童鞋心里肯定不爽。
+
+好在Git考虑到了大家的感受，这个问题解决起来也很简单，在Git工作区的根目录下创建一个特殊的.gitignore文件，然后把要忽略的文件名填进去，Git就会自动忽略这些文件。
+
+不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。所有配置文件可以直接在线浏览：https://github.com/github/gitignore
+
+忽略文件的原则是：
+
+* 忽略操作系统自动生成的文件，比如缩略图等；
+* 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件；
+* 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+
+**详情参考该文件夹下的.gitignore文件**
 ###不常用的                                                                                                                      
 `strace -e 'trace=file' git *`	//跟踪这条git命令的磁盘访问。                                                                                  
 `git rev-parse --git-dir`		//显示版本库.git目录所在的位置                                                                 
