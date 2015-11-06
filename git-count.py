@@ -17,7 +17,8 @@ def if_connect(r):
 		print('CHECK YOUR CONNECTION!')
 		exit()
 
-def get_header(): 
+def get_link(h): 
+	pattern = re.compile("<(\S+)>; rel=\"next\"")
 	try:
 		result = pattern.search(h['link'])
 	except:
@@ -51,7 +52,6 @@ def collect_stats(commit_list):
 		#return in command line like(8 files changed, 448 insertions(+), 1 deletion(-))
 		output = os.popen(git_diff_command)
 		data = output.read()
-		print(data)
 		
 		p_ins = re.compile("(\d+) insertion")
 		r_ins = p_ins.search(data)
@@ -92,23 +92,37 @@ def collect_stats(commit_list):
 
 
 #data
+tk='f62bc0b33c33a2681d7de2c718239b526220f49b'
+payload = {'since':'2015-01-01T00:00:00Z','until':'2015-10-01T00:00:00Z','access_token':tk}
+token = {'access_token':tk}
 user_stats={"darkframemaster":{"additions":0,"deletions":0,"total":0}}
 
 #main program
-r = requests.get("https://api.github.com/repos/darkframemaster/learngit/commits")
-if_connect(r)
+r = requests.get("https://api.github.com/repos/darkframemaster/learngit/commits",params=payload)
+if_connect(r)	#check connect
 
 #count the data in the repo
 collect_stats(r.json())
 print(user_stats)
 
 #count the data in other repo
-
-pattern = re.compile("<(\S+)>; rel=\"next\"")
 h = r.headers
+print(h)
 print(h['X-RateLimit-Remaining'])
-result=get_header()
-print(result)
-next_url=result.group(1)
-print(next_url)
+result=get_link(h)
+
+while(result is not None):
+	next_url=result.group(1)
+	
+	r=request.get(next_url,params=token)
+	collect_stats(r.json())
+	
+	h=r.headers
+	print(h['link'])
+	result=get_link(h)
+	
+	print(r.headers['X-RateLimit-Remaining'])
+	print(user_stats)
+
+
 

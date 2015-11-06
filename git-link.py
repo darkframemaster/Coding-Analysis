@@ -28,4 +28,12 @@ print("ex:",ex)
 print(ex.headers)
 print(ex.headers['link'])
 
+#加上params
+tk='f62bc0b33c33a2681d7de2c718239b526220f49b'
+payload = {'since':'2015-01-01T00:00:00Z','until':'2015-10-01T00:00:00Z','access_token':tk}
+token = {'access_token':tk}
+
+my_param = requests.get("https://api.github.com/repos/darkframemaster/learngit/commits", params = payload)
+print("my_param:",my_param)
+print(my_param.headers)
 
