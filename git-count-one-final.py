@@ -6,13 +6,6 @@ import os
 import sys
 import requests
 
-def get_link(): 
-	try:
-		result = pattern.search(h['link'])
-	except:
-		print('no "link" in r.header')
-		exit()
-	return result	
 
 def is_merge(commit_sha):
 	cmd = "git show --oneline " + commit_sha
@@ -81,20 +74,27 @@ def collect_stats(commit_list):
 
 #data
 user_stats={"dummy":{"additions":0,"deletions":0,"total":0}}
+tk='f62bc0b33c33a2681d7de2c718239b526220f49b'
+payload = {'access_token':tk}
 
 #main program
-r = requests.get("https://api.github.com/repos/darkframemaster/learngit/commits")
-collect_stats(r.json())
+my_repos=requests.get("https://api.github.com/users/darkframemaster/repos",params=tk)
+print(my_repos)
+count=0
+repos_link=[]
+while count<100:
+	try:
+		count=count+1
+		repos_link.append(my_repos.json()[count]['commits_url'][:-6])#用切片取得{/sha}前的串
+	except:
+		break
+
+print(repos_link)
+
+for i in repos_link:
+	repo_link=requests.get(i,params=tk)
+	collect_stats(repo_link.json())
+
 print(user_stats)
 
-print(r)
-
-
-pattern = re.compile("<(\S+)>; rel=\"next\"")
-h = r.headers
-print(h['X-RateLimit-Remaining'])
-result=get_link() #use function get_link to get next_link
-print(result)
-next_url=result.group(1)
-print(next_url)
 

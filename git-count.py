@@ -49,7 +49,9 @@ def collect_stats(commit_list):
 		user = output.read().strip(' \t\n\r')
 		
 		git_diff_command = "git diff --shortstat "+m['sha'] + " " + m['sha'] + "^"
-		#return in command line like(8 files changed, 448 insertions(+), 1 deletion(-))
+		#return in command line like(1 files changed, 1 insertions(+), 1 deletion(-))
+		#git diff --shortstat commit1 commit2
+		#compare commit1 to commit2 and show the changes
 		output = os.popen(git_diff_command)
 		data = output.read()
 		
@@ -123,6 +125,3 @@ while(result is not None):
 	
 	print(r.headers['X-RateLimit-Remaining'])
 	print(user_stats)
-
-
-
