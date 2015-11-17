@@ -51,7 +51,7 @@ class Time():
 def get_time_diff(time_list):
 	p_time = re.compile("(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\:(\S+)\:(\S+)\s+(\S+)")
 	i=0
-#for each member in time_list we turn it in to Time(class),and set the diff_time as the new member of the time_list 	
+#for each member in time_list , turn it in to Time(class),and set the 'time_diff' as the new member of the time_list 	
 	while(i<len(time_list)):
 		cp_time=p_time.search(time_list[i])
 		time=Time()		
@@ -96,7 +96,7 @@ def get_commit_dic():#get commit and commit_time
 	if(len(commit_list)!=len(time_list)):
 		print("error data!")
 		exit()
-#change time
+#get difference between time
 	time_list=get_time_diff(time_list)		
 	
 	i=0
