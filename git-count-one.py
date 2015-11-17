@@ -198,7 +198,6 @@ user_stats={}
 #main program
 commit_dic=get_commit_dic()
 print(commit_dic)
-
 collect_stats(commit_dic)
 print(user_stats)
 
