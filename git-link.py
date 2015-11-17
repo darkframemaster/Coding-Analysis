@@ -38,7 +38,7 @@ print('\n',"my_param:",my_param)
 print(my_param.headers)
 
 
-#repos
+#get repos
 my_repos=requests.get("https://api.github.com/users/darkframemaster/repos",params=tk)
 print('\n',"my repos:",my_repos)
 print(my_repos.headers)

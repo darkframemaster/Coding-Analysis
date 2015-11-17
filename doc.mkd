@@ -1,0 +1,11 @@
+##git-count-one
+###functions:
+* `get_commit_link()`:不需要参数。该函数用于返回仓库的commit的hash列表。在主程序中掉用。
+* `is_merge(commit_sha)`:一个参数，commit的hash值。该函数用于检查该commit是否包含合并分支，包含返回`True`，不包含返回`False`。在`collect_stats(commit_list)`中调用。
+* `collect_stats(commit_list)`:一个参数，commit的hash列表。该函数用于计算每次commit的代码改变量。在主程序中调用。
+
+###git command:
+* `git log`:列出当前仓库的所有commit信息，用于收集commit_list。**commit按时间排序，最近的commit，最先列出**
+* `git show --oneline [commit_sha]`:列出一次commit的具体信息非常详细。
+* `git show -s --format=%an [commit_sha]`:列出这次commit的提交者
+* `git diff --shortstat [commit_sha] [commit_sha]`:列出两次commit之间的变化。用于计算每次commit的代码改变量。
