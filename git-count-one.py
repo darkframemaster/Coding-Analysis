@@ -77,13 +77,21 @@ def get_commit_dic():#get commit and commit_time
 	output = os.popen(cmd)
 	info = output.read()
 #get commit in commit_list
-	p_commit = re.compile("commit (\S+)")
+	p_commit = re.compile("commit (\w+)")
 	for match in p_commit.finditer(info):
 		commit=match.group(1)
+		insert=True#
 		if commit is None:	
 			print("no commit!")
-		else:
+		if len(commit_list)==0:
 			commit_list.append(commit)
+		for i in commit_list:
+			if i==commit:
+				print(i,commit)
+				insert=False
+		if insert==True:
+			commit_list.append(commit)
+
 #get time in time_list
 	p_date = re.compile("Date\:\s+(\S+ \S+ \S+ \S+ \S+)")
 	for match in p_date.finditer(info):
@@ -94,6 +102,7 @@ def get_commit_dic():#get commit and commit_time
 			time_list.append(all_time)	
 #compare the lenth of the commit_list and time_list to confirm the lists have the same lenth.	
 	if(len(commit_list)!=len(time_list)):
+		print(len(commit_list),'!=',len(time_list))
 		print("error data!")
 		exit()
 #get difference between time
@@ -114,6 +123,7 @@ def is_merge(commit_sha):
 	title = output.read()
 	p_merge = re.compile("Merge")
 	if(p_merge.search(title) is not None):
+		print('Pass!:',commit_sha,' is a Merge commit')		
 		return True
 	else:
 		return False
@@ -131,8 +141,10 @@ def collect_stats(commit_dic):
 		git_show_command = "git show -s --format=%an " + m		
 		output = os.popen(git_show_command)
 		user = output.read().strip(' \t\n\r')
+		#print(git_show_command)
+		#print(user)
 		
-		if(m==commit_dic[len(commit_dic)-1][0]):
+		if(m==commit_dic[len(commit_dic)-1][0]):#if m is the first commit
 			git_diff_command="git diff --shortstat "+m
 		else:
 			git_diff_command = "git diff --shortstat "+m + " " + m + "^"
@@ -159,23 +171,20 @@ def collect_stats(commit_dic):
 		  del_str = r_del.group(1)
 		  del_data = int(del_str)
 	 
-#ignore those commit which (ins+del) is more than 5000 
-		if(ins_data + del_data > 5000):
-		  print(user)
-		  print('ins:'+str(ins_data))
-		  print('del:'+str(del_data))
-		  ins_data = 0
-		  del_data = 0
-#ignore those commit which ins(line)/time(s) is more than 1/60.(assume that a man can code one line in a minute)
+#first ignore those commit which (ins+del) is more than 5000 
+	#	if(ins_data + del_data > 5000):
+	#	  print('Pass!: '+user+' commit too mush',' ins:'+str(ins_data),' del:'+str(del_data))
+	#	  ins_data = 0
+	#	  del_data = 0
+#then ignore those commit which ins(line)/time(s) is more than 1/60.(assume that a man can code one line in a minute)
 		if(t=="-1" or t=='-1'):
-		  print("ok!")			
+		  print("ok!: "+m[0:7])			
 		elif(ins_data/float(t)<float(1/60)):
-		  print("ok!")
+		  print("ok!: "+m[0:7])
 		else:
+		  print("Pass!: "+user+' commit too ofen ',ins_data,t,' line/s')		
 		  ins_data = 0
 		  del_data = 0
-		  print("pass")		
-		
 
 		if(user in user_stats):
 		  stats = user_stats[user]

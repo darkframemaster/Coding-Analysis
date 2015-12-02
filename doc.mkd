@@ -17,9 +17,17 @@
 
 ###git command:
 * `git log`:列出当前仓库的所有commit信息，用于收集commit和对应的time。**在命令输出中commit按时间排序，最近的commit，最先列出**
+    * `git log --pretty=oneline`   
 * `git show --oneline [commit_sha]`:列出一次commit的具体信息非常详细。其中包含了merge信息。
 * `git show -s --format=%an [commit_sha]`:列出这次commit的提交者
 * `git diff --shortstat [commit_sha] [commit_sha]`:列出两次commit之间的变化。用于计算每次commit的代码改变量。
 
 ###其他
 代码中忽略了所有merge的commit和那些一分钟代码量大于一行的commit。
+
+
+###问题
+* git log会列出rollback的commit值，这会导致commit的数目与time的数目对不上。
+    *  目前已经解决
+
+
