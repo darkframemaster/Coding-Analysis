@@ -26,8 +26,5 @@
 代码中忽略了所有merge的commit和那些一分钟代码量大于一行的commit。
 
 
-###问题
-* git log会列出rollback的commit值，这会导致commit的数目与time的数目对不上。
-    *  目前已经解决
 
 

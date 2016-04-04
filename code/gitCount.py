@@ -14,135 +14,7 @@ import json
 import os
 import sys
 import requests
-
-###########################################	
-#	classes  
-#	Time:to do some operate of the commit time
-##########################################
-class Time():
-	year=0
-	month=0
-	date=0
-	hour=0
-	minute=0
-	second=0
-	
-	def ex_month(self,M):
-		if(M=='Jan'): 	return 1
-		if(M=='Feb'):	return 2
-		if(M=='Mar'):	return 3
-		if(M=='Apr'):	return 4
-		if(M=='May'):	return 5
-		if(M=='Jun'): 	return 6
-		if(M=='Jul'):	return 7
-		if(M=='Aug'):	return 8
-		if(M=='Sep'):	return 9
-		if(M=='Sept'):  return 9
-		if(M=='Oct'):	return 10
-		if(M=='Nov'):	return 11
-		if(M=='Dec'):	return 12 
-		else: 
-			assert 1<=int(M)<=12,'month error! in Time FUN ex_month'
-			return int(M)
-	def _init_(self,Y,M,D,h,m,s):
-		self.year=int(Y)
-		self.month=self.ex_month(M)
-		self.date=int(D)
-		self.hour=int(h)
-		self.minute=int(m)
-		self.second=int(s)
-	def set(self,Y,M,D,h,m,s):
-		self.year=int(Y)
-		self.month=self.ex_month(M)
-		self.date=int(D)
-		self.hour=int(h)
-		self.minute=int(m)
-		self.second=int(s)
-	def set_str(self,str_time):
-		p_time = re.compile("(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)")
-		cp_time=p_time.search(str_time)
-		self.set(cp_time.group(1),cp_time.group(2),cp_time.group(3),cp_time.group(4),cp_time.group(5),cp_time.group(6))
-	def set_comm(self,com_time):
-		p_time = re.compile("(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\:(\S+)\:(\S+)\s+(\S+)")
-		cp_time=p_time.search(com_time)		
-		self.set(cp_time.group(7),cp_time.group(2),cp_time.group(3),cp_time.group(4),cp_time.group(5),cp_time.group(6))
-	def is_empty(self):
-		if self.year==self.month==self.date==self.hour==self.minute==self.second==0:
-			return True	
-		else:
-			return False
-
-
-	#####################
-	#	2.compare time with other_time.   if self>other_time return TURE else return FALSE
-	#####################	
-	def cmp_with(self,other_time):
-		if(other_time.year>self.year):
-			return False
-		elif(other_time.year<self.year):
-			return True
-		else:#other_time.year==self.year
-			if(other_time.month>self.month):
-				return False
-			elif(other_time.month<self.month):
-				return True
-			else:
-				if(other_time.date>self.date):
-					return False
-				elif(other_time.date<self.date):
-					return True
-				else:
-					if(other_time.hour>self.hour):
-						return False
-					elif(other_time.hour<self.hour):
-						return True
-					else:
-						if(other_time.minute>self.minute):
-							return False
-						elif(other_time.minute<self.minute):
-							return True
-						else:
-							if(other_time.second>self.second):
-								return False
-							elif(other_time.second<self.second):
-								return True
-							else:
-								return False
-	def is_same(self,other_time):
-		if(self.year==other_time.year and self.month==other_time.month and self.date==other_time.date and self.hour==other_time.hour and self.minute==other_time.minute and self.second==other_time.second):
-			return True
-		else:
-			return False
-
-
-	##################
-	#	3.compute the difference of the time between the two commit,and return diff as result. 
-	##################	
-	def diff(self,other_time):
-		diff=0
-		if(self.cmp_with(other_time)==False):
-			diff=-1
-		if(self.year != other_time.year or self.month != other_time.month):	
-				if(self.year-other_time.year==1 and self.month==1 and other_time.month==12):
-					diff=(31-self.date+other_time.date)*86400+(other_time.hour-self.hour)*3600+(other_time.minute-self.minute)*60+(other_time.second-self.second)	
-				else:
-					diff=-1		#diff -1 means there is a long time between this two commit.
-				if(diff == 0): diff=0.000001
-				return diff
-		else:
-			diff=(int(self.date)-int(other_time.date))*86400+(int(self.hour)-int(other_time.hour))*3600+(int(self.minute)-int(other_time.minute))*60+int(self.second)-int(other_time.second)
-		#assert diff!=0,"diff cannot be zore! error in class Time,FUN diff(other_time)"
-		if(diff == 0): diff=0.000001		
-		return diff	
-	
-	###########################
-	#print time
-	###########################
-	def show(self):
-		print(self.year,self.month,self.date,self.hour,self.minute,self.second)	
-
-
-
+import gitTime
 
 							
 ##########################
@@ -152,14 +24,15 @@ class Time():
 ###########################
 ########################### 
 class Info():
-#commit info:
-	commit_dic={}	#show_commit_dic(False) { 0:[commit,time,diff,email,info] }
-	commit_list=[]
-	time_list=[]	#show_commit_time()
-	commit_lenth=0
-#other info:
-	user_email=[]
-	time_diff=[]
+	def __init__(self):
+	#commit info:
+		self.commit_dic={}	#show_commit_dic(False) { 0:[commit,time,diff,email,info] }
+		self.commit_list=[]
+		self.time_list=[]	#show_commit_time()
+		self.commit_lenth=0
+	#other info:
+		self.user_email=[]
+		self.time_diff=[]
 
 	#####
 	#	Functions
@@ -173,7 +46,7 @@ class Info():
 	#for each member in time_list , turn it in to Time(class),and set the 'time_diff' as the new member of the time_list 	
 		while(i<len(self.time_list)):
 			cp_time=p_time.search(self.time_list[i])
-			time=Time()		
+			time=gitTime.Time()		
 			time.set(cp_time.group(7),cp_time.group(2),cp_time.group(3),cp_time.group(4),cp_time.group(5),cp_time.group(6))
 			self.time_list[i]=time		
 			i=i+1
@@ -187,8 +60,8 @@ class Info():
 	#	1. INIT FUNCTION. 
 	# 	get_commit_dic(self,st_time,ed_time):for each commit get the commit_id and commit_time and return two list. 
 	#######################################################################################################################################
-	def get_commit_dic(self,st_time=Time(),ed_time=Time()):#get commit and commit_time
-		cmd = "git log"		#"git log" for listing out commit data
+	def get_commit_dic(self,st_time=gitTime.Time(),ed_time=gitTime.Time()):#get commit and commit_time
+		cmd = "git log -1"		#"git log" for listing out commit data
 		output = os.popen(cmd)
 		info = output.read()
 	#get commit in commit_list and time in time_list
@@ -202,13 +75,13 @@ class Info():
 		self.commit_list.append(last_commit)		
 		self.time_list.append(last_time)
 		self.user_email.append(last_email)
-		print("last commit: " , last_commit," last time:",last_time , "last email:",last_email)
+		print("last commit: " , last_commit,"\nlast time:",last_time , "\nlast email:",last_email)
 	
 		#other commit:
 		sha=last_commit
 		while(sha!=None):
 			print(sha,len(self.commit_list))
-			cmd = "git log " + sha +'^'
+			cmd = "git log -1 " + sha +'^'
 			output = os.popen(cmd)
 			info = output.read()
 		#get time in time_list			
@@ -231,24 +104,23 @@ class Info():
 			self.commit_lenth=len(self.commit_list)
 	#get difference between time
 		self.get_time_diff()		
-	#init commit_dic
-		i=0
-		while(i<len(self.commit_list)):
+	#init commit_dic for all data 	
+		for i in range(0,len(self.commit_list)):
 			self.commit_dic[i]=[self.commit_list[i],self.time_list[i],self.time_diff[i],self.user_email[i]]
-			i=i+1
-	#st_time -- ed_time
-		time_now=Time()
-		time_now.set_str(str(time.strftime('%Y %m %d %H %M %S',time.gmtime())))
-		if(ed_time.is_empty()==False):
-			temp={}
-			for key in self.commit_dic:
-				if(st_time.cmp_with(self.commit_dic[key][1])==False):
-					if(self.commit_dic[key][1].cmp_with(ed_time)==False):
-						#print(key)
-						#self.commit_dic[key][1].show()
-						temp[key]=self.commit_dic[key]	
-					else:
-						continue		
+			
+
+	#get datas from st_time to ed_time
+		#time_now=Time()
+		#time_now.set_str(str(time.strftime('%Y %m %d %H %M %S',time.gmtime())))
+		i=0		
+		temp={}
+		for key in self.commit_dic:
+			if(st_time.cmp_with(self.commit_dic[key][1])==False):
+				if(self.commit_dic[key][1].cmp_with(ed_time)==False):
+					temp[i]=self.commit_dic[key]
+					i+=1	
+				else:
+					continue		
 		try:		
 			self.commit_dic=temp
 			self.commit_lenth=len(self.commit_dic)
@@ -294,23 +166,24 @@ class Info():
 #	class coder
 ################################
 ################################
-class Coder():
-	#user info:
-	user_stats={}
-	user_email=[]
-	user_sort=[]	#show_user_sort()
-	user_num=0
+class Coder:
+	def __init__(self):
+		#user info:
+		self.user_stats={}
+		self.user_sort=[]	#show_user_sort()
+		self.user_num=0
 	
 	
 	####################################################################
 	#	1.1  is_merge(commit_sha):to confirm the commit is not been merged.
 	####################################################################
 	def is_merge(self,commit_sha):
-		cmd = "git show --oneline " + commit_sha
+		cmd = "git log -1 " + commit_sha
 		output = os.popen(cmd)
 		title = output.read()
 		p_merge = re.compile("Merge")
 		if(p_merge.search(title) is not None):
+			print('merge')
 			return True
 		else:
 			return False
@@ -404,8 +277,6 @@ class Coder():
 				stats['contribute'] += (ins_data*0.7+del_data*0.3)
 				stats['commit_times'] += 1
 				p_email=re.compile(commit_dic[key][3])
-				print(commit_dic[key][3])
-				print(stats['email'])
 				if(p_email.search(stats['email']) == None):
 					stats['email'] = stats['email'] +commit_dic[key][3]
 				self.user_stats[user] = stats
@@ -428,7 +299,7 @@ class Coder():
 		temp.sort(key=lambda x:x[4],reverse=True)		
 		assert self.user_num==len(temp),'error in FUNC:sort_coder!'
 		self.user_sort=temp
-		self.show_user_sort()	
+		
 
 	#################################################################################################################
 	#		3.show_user_sort()
@@ -440,28 +311,29 @@ class Coder():
 ###################################################################
 #	main program
 ###################################################################
-#init time
-st_time=Time()
-ed_time=Time()
-st_time.set(2000,1,1,0,0,0)
-ed_time.set(2017,1,1,0,0,0)
- 
-#init commit 
-commit=Info()
-commit.get_commit_dic(st_time,ed_time)
+if __name__=='__main__':
+	#init time
+	st_time=gitTime.Time()
+	ed_time=gitTime.Time()
+	st_time.set(2010,12,1,0,0,100)
+	ed_time.set(2016,1,1,0,0,0)
+	 
+	#init commit 
+	commit=Info()
+	commit.get_commit_dic(st_time,ed_time)
 
-#init user info
-user=Coder()
-user.collect_stats(commit.commit_dic)
-user.sort_coder()
+	#init user info
+	user=Coder()
+	user.collect_stats(commit.commit_dic)
+	user.sort_coder()
+	user.show_user_sort()	
 
-
-##########################################
-#	result
-##########################################
-#commit.show_commit_dic(False)
-#commit.show_commit_list()
-#commit.show_time_list()
+	##########################################
+	#	result
+	##########################################
+	#commit.show_commit_dic(False)
+	#commit.show_commit_list()
+	#commit.show_time_list()
 
 
 

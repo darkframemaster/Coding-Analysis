@@ -1,4 +1,7 @@
 #Coding-Analysis
-It will be useful if you could give me some advice
->**thank you**
-#~(O*O)~
+copy three python files to your local repositories and run `gitCountUI.py`.
+
+you need to`init data`  with two time,and  wait to see the actions about the members.
+
+after init you can also check the other datas in `other data`.
+
