@@ -1,4 +1,6 @@
 ##git-count-one说明文档
+
+##gitTime.py
 ###class:
 * Time():时间类。
     * 变量：年，月，日，小时，分钟，秒。
@@ -8,6 +10,7 @@
         * diff:计算时间差（self-other）。需要一个Time类型的参数。忽略年月差，返回秒级别的时间差距。
         * show:打印出对象的变量值。无参数。无返回。   
        
+##gitCount.py
 ###functions:
 * `get_time_diff(time_list)`:一个list作为参数，list中为commit的时间信息。该函数用于计算commit的时间差量。返回一个list。在`get_commit_dic`中调用。
 * `get_commit_dic`:不需要参数。该函数用于得到commit和对应time的时间表(dic)。返回一个dic格式为

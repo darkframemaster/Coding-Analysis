@@ -1,0 +1,43 @@
+##MongoDB
+MongoDB是一个跨平台的NoSQL(非关系型数据库),基于Key-value形式保存数据。存储格式非常类似于Python字典，因此用Python操作MongoDB会非常容易。
+
+```
+$sudo apt-get install mongodb
+$sudo service mongodb start
+$sudo service mongodb restart
+$sudo service mongodb stop
+
+$mongo
+$>help
+$use dbname	#建立一个数据库,并进行连接
+$a={"name":"xuehao"}	#键值对作为insert，find，remove的参数
+$db.tablename.insert(a)
+$db.tablename.find(a)
+$db.remove(a)
+$db.dropDatabase()	#删除dbname数据库
+
+```
+
+###python-mongodb
+安装mongodb python支持
+
+```
+$sudo pip install pymongo #sudo pip3 install pymongo
+$python
+>import pymongo
+>print(pymongo.__version__)
+```
+
+使用pymongo
+
+```
+import pymongo
+connection=pymongo.MongoClient()	#建立连接
+tdb=connection.name
+xxx={...}
+...
+xxx={...}
+post_info=tdb.test
+post_info.insert(xxx)
+post_info.remove(xxx)
+```

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3.4
 #-*- coding:utf-8 -*-
+
+__author__='xuehao'
+
 import re
 import tkinter
 import tkinter.simpledialog
@@ -208,8 +211,9 @@ class mainDialog:	#主窗体
 		self.root.quit()
 					
 #main program	
-root=tkinter.Tk()	#生成root主窗口
-button=mainDialog(root)
-root.mainloop()		#进入消息循环
+if __name__=="__main__":
+	root=tkinter.Tk()	#生成root主窗口
+	button=mainDialog(root)
+	root.mainloop()		#进入消息循环
 
 
