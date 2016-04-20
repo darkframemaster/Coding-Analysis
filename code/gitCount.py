@@ -4,12 +4,9 @@
 __author__='xuehao'
 
 
-import time
 import re
-import json
 import os
 import sys
-import requests
 import gitTime
 
 							
@@ -19,7 +16,7 @@ import gitTime
 #	to save the informations of the commit in the repo.
 ###########################
 ########################### 
-class Info():
+class Info(object):
 	def __init__(self):
 	#commit info:
 		self.commit_dic={}	#show_commit_dic(False) { 0:[commit,time,diff,email,info] }
@@ -162,7 +159,7 @@ class Info():
 #	class coder
 ################################
 ################################
-class Coder:
+class Coder(object):
 	def __init__(self):
 		#user info:
 		self.user_stats={}

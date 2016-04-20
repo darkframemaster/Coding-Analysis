@@ -31,7 +31,7 @@ class myEntry:
 			edit.pack()
 '''
 
-class myListBox:
+class myListBox(object):
 	def __init__(self,root,info=[]):
 		#一个带有两个滑动框的listbox
 		self.root=root
@@ -54,7 +54,7 @@ class myListBox:
 		#button=tkinter.Button(self.root,text='coder_list',bg='gray',)
 		#按钮实现list的显示
 
-class initDia:
+class initDia(object):
 	def __init__(self,root):
 		self.root=root
 		self.top=tkinter.Toplevel(root)
@@ -93,7 +93,7 @@ class initDia:
 		else:
 			return
 
-class dataDia:
+class dataDia(object):
 	def __init__(self,root):
 		self.root=root
 		self.top=tkinter.Toplevel(self.root)
@@ -117,7 +117,7 @@ class dataDia:
 	def Get(self):
 		return	self.r.get() 
 
-class mainDialog:	#主窗体 
+class mainDialog(object):	#主窗体 
 	def __init__(self,root):#一个label 两个按钮
 		self.root=root
 
