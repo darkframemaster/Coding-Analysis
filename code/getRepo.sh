@@ -64,4 +64,5 @@ else
 	echo "initial failed!!!"
 fi
 
+cd ../..
 exit 0
