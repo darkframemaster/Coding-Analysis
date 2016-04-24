@@ -1,0 +1,100 @@
+###about bash shell
+
+###变量类型
+
+运行shell时，会同时存在三种变量：
+
+*   1) 局部变量 局部变量在脚本或命令中定义，仅在当前shell实例中有效，其他shell启动的程序不能访问局部变量。
+*   2) 环境变量 所有的程序，包括shell启动的程序，都能访问环境变量，有些程序需要环境变量来保证其正常运行。必要的时候shell脚本也可以定义环境变量。
+*   3) shell变量 shell变量是由shell程序设置的特殊变量。shell变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了shell的正常运行
+
+###基本操作
+* # 没错这是注释
+* variable
+	* `${variable_name}`---------------------`$`使用变量,也可以不叫括号但不推荐
+	* `readonly variable_name`---------------`readonly`将变量设置为只读变量
+	* `unset variable_name`------------------`unset`删除变量
+* `echo`
+	* `echo ${variable_name}`----------------`echo`打印变量
+	* `echo \`my name is "$name"\``----------`echo`答应字符串,**注意是反引号**
+* 数组
+	* `array_name=(value0 value1 value2)`----`()`表示数组
+	* `array_name[0]=value0`-----------------`[]`取的位置
+	* `${array_name[0]}`---------------------取得某位置元素
+	* `${array_name[@]}`---------------------`@`取得所有元素
+	* `len=${#array_name[@]}`----------------`#`取得数组长度
+	* `len=${#array_name[n]}`----------------取得单个元素长度
+* `for skill in Ada Coffe Action Java; do`	可以这样
+* `for file in \`ls /etc\``		也可以使用命令扩展你的代码
+
+###test
+test命令用于检查某个条件是否成立，可以进行数值，字符和文件三个方面测试。
+
+```
+if test -e ./bash
+then
+	echo 'exist!'
+else
+	echo 'not exist!'
+fi
+```
+
+###文件包含
+`. ./scriptname.sh`--------`.`就相当于是import啦
+
+
+###string
+####单引号
+`str='this is a string'`
+
+限制:
+
+* 单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
+* 单引号字串中不能出现单引号（对单引号使用转义符后也不行）。
+
+####双引号
+```
+name='xuehao'
+str="hello,\'$name\'!\n"
+```
+
+优点:
+
+* 双引号里可以有变量
+* 双引号里可以出现转义字符
+
+####字符串拼接
+```
+name='xuehao'
+string="hello,"${name}"!"
+echo string
+string="hello,${name}!"
+```
+
+####字符串长度
+```
+string="a b c d"
+echo ${#string}
+```
+
+####提取子串
+我去还有切片，简直啦
+
+```
+string="what are you doing,xuehao!"
+echo ${string:1:4}
+```
+
+####查找字串
+```
+string="runoob is a great company"
+echo `expr index "${string}"is`
+```
+
+
+
+
+
+
+
+

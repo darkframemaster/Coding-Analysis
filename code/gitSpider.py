@@ -153,11 +153,7 @@ class GitApiSpider(object):
 		#	print(self.data[i])
 		print('---------------------stats------------------------')
 		for i in self.user_stats:
-			print(self.user_stats[i])
-	
-
-
-		
+			print(self.user_stats[i])	
 	
 			
 		

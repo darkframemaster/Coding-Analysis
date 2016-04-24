@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
+''' extend of datetime '''
+
 __author__='xuehao'
 
 from datetime import datetime,time,date
@@ -39,7 +41,7 @@ import re
 
 
 '''
-public functions
+functions
 '''
 def isTimeStr(str_time):
 	print(type(str_time))
@@ -166,20 +168,13 @@ class Time(object):
 		diff=0
 		one=datetime(self.year,self.month,self.date,self.hour,self.minute,self.second)
 		two=datetime(other_time.year,other_time.month,other_time.date,other_time.hour,other_time.minute,other_time.second)
-		delta=one-two
-		if delta.days>30:
-			return -1
-		if delta.total_seconds()==0:
-			return 0.0001		
-		return delta.total_seconds()
+		delta=one-two		
+		return int(delta.total_seconds())
 	
 	###########################
 	#	4.print time
-	###########################
-	def show(self):
-		print(self.year,self.month,self.date,self.hour,self.minute,self.second)	
-		
-	def reStr(self):
+	###########################	
+	def __reStr__(self):
 		return str(self.year)+'-'+str(self.month)+'-'+str(self.date)+' '+str(self.hour)+':'+str(self.minute)+':'+str(self.second)
 
 

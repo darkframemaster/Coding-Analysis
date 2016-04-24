@@ -1,10 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 #-*- coding:utf-8 -*-
-
-''' this is a simple UI for offline working '''
-
-__author__='xuehao'
-
 import re
 import tkinter
 import tkinter.simpledialog
@@ -13,10 +8,29 @@ import gitTime
 import gitCount
 import time
 
-''' list with a scrollbar and a lable of lines in the list '''
-class myListBox(object):
+
+'''
+class myEntry:
+	def __init__(self,root,Type,showInfo,width=None,sign=None):
+		self.root=root
+		if Type=='entry' or Type=='Entry':
+			if sign!=None:
+				entry=tkinter.Entry(self.root,show=sign)
+				entry=insert(1.0,showInfo)
+				entry.pack()				
+			else:
+				entry=tkinter.Entry(self.root)
+				entry.insert(1.0,showInfo)
+				entry.pack()
+		elif Type=='text' or Type=='Text':
+			edit=tkinter.Text(self.root,background='white')
+			edit.insert(1.0,str(showInfo))
+			edit.pack()
+'''
+
+class myListBox:
 	def __init__(self,root,info=[]):
-		#一个带有一个滑动框的listbox
+		#一个带有两个滑动框的listbox
 		self.root=root
 		self.scrollbarY=tkinter.Scrollbar(root)
 		self.scrollbarY.pack(side='left',fill='y')
@@ -33,13 +47,11 @@ class myListBox(object):
 		self.label=tkinter.Label(self.root,text='All lines:  '+str(self.listbox.size()))
 		self.label.pack()
 		
+		
 		#button=tkinter.Button(self.root,text='coder_list',bg='gray',)
 		#按钮实现list的显示
 
-
-''' a window with two label and two entry '''
-''' users use this window to init time '''
-class initDia(object):
+class initDia:
 	def __init__(self,root):
 		self.root=root
 		self.top=tkinter.Toplevel(root)
@@ -48,6 +60,7 @@ class initDia(object):
 		
 		self.label1=tkinter.Label(self.top,text='input start time(ex:year month day)',width=40)
 		self.label1.pack()
+
 		self.entry=tkinter.Entry(self.top,width=30)
 		self.entry.insert(1,'2010 12 1 0 0 0')
 		self.entry.pack()
@@ -55,6 +68,7 @@ class initDia(object):
 
 		self.label2=tkinter.Label(self.top,text='input end time',width=40)
 		self.label2.pack()
+
 		self.entry1=tkinter.Entry(self.top,width=30)
 		self.entry1.insert(1,'2016 1 1 0 0 0')
 		self.entry1.pack()	
@@ -76,9 +90,7 @@ class initDia(object):
 		else:
 			return
 
-''' a window with radios '''
-''' users use this window to select data they need to see '''
-class dataDia(object):
+class dataDia:
 	def __init__(self,root):
 		self.root=root
 		self.top=tkinter.Toplevel(self.root)
@@ -102,8 +114,7 @@ class dataDia(object):
 	def Get(self):
 		return	self.r.get() 
 
-''' Main window : start in here '''
-class mainDialog(object):	#主窗体 
+class mainDialog:	#主窗体 
 	def __init__(self,root):#一个label 两个按钮
 		self.root=root
 
@@ -121,20 +132,19 @@ class mainDialog(object):	#主窗体
 		self.buttonQuit=tkinter.Button(self.root,text='Quit',bg='gray',width=27,command=self.Quit)
 		self.buttonQuit.pack()
 		
-		#  初始化gitCount的变量
+		#初始化gitCount的变量
 		self.st_time=None
 		self.ed_time=None
 		self.commit=None
 		self.user=None
 	
-	''' Do things in this func '''
 	def Main(self,stTime,edTime):	#主程序入口
 		if len(stTime)==0:
 			stTime='2000 1 1 0 0 0'
 		if len(edTime)==0:
 			edTime=time.strftime('%Y %m %d %H %M %S',time.localtime())
 		
-		# 初始化gitCount的变量
+		#初始化gitCount的变量
 		self.st_time=gitTime.Time()
 		self.ed_time=gitTime.Time()
 		self.st_time.set_str(stTime)
@@ -153,7 +163,6 @@ class mainDialog(object):	#主窗体
 		listroot=tkinter.Tk()
 		listbox=myListBox(listroot,self.user.user_sort)
 
-	''' '''
 	def initDia(self):	#init 按钮绑定的事件
 		d=initDia(self.root)
 		self.buttonInit.wait_window(d.top)
@@ -175,7 +184,9 @@ class mainDialog(object):	#主窗体
 
 	def dataDia(self):
 		d=dataDia(self.root)
-		self.buttonDataChoose.wait_window(d.top)
+		self.buttonInit.wait_window(d.top)
+		#self.buttonDataChoose.wait_window(d.top)
+		#self.buttonQuit.wait_window(d.top)
 
 		if self.st_time==None or self.ed_time==None or self.user==None or self.comInfo==None:
 			tkinter.messagebox.showerror('git count','please init data first!')			
@@ -197,9 +208,8 @@ class mainDialog(object):	#主窗体
 		self.root.quit()
 					
 #main program	
-if __name__=="__main__":
-	root=tkinter.Tk()	#生成root主窗口
-	button=mainDialog(root)
-	root.mainloop()		#进入消息循环
+root=tkinter.Tk()	#生成root主窗口
+button=mainDialog(root)
+root.mainloop()		#进入消息循环
 
 
