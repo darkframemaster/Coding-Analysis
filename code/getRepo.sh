@@ -2,7 +2,7 @@
 
 #this shell script is use for download git_repo from github 
 #for the git_repo we get,we just need .git/ direction
-
+#
 #the script accept two argument :
 #1 for the name of the owner name
 #2 for the name of the repo name

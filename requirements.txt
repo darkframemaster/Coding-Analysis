@@ -1,0 +1,8 @@
+Development dependency.
+
+'''这个文件应该指明完整工程的所有依赖包: 测试, 编译和文档生成。
+如果你的工程没有任何开发依赖，或者你喜欢通过 setup.py 来设置，那么这个文件不是必须的'''
+
+ex: pip install modulename
+
+

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
+
 import os
+
 import config
-from doshell import *
+from doshell import Git
+
 
 
 if __name__=='__main__':
 	print(config.PROJECTS_PATH)
-	print(__name__)
-	print(__file__)
 	print(os.path.abspath(__file__))
 	print(os.path.dirname(__file__))
 	print(os.path.abspath(os.path.dirname(__file__)))

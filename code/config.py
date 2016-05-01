@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
+''' Global params configuration. '''
+
 __author__='xuehao'
 
 import os
 import sys
 
 
-
-'''get data from the PROJECT_PATH'''
+# PROJECT_PATH: All the download projects's file save in ./projects. 
 PROJECTS_PATH=os.path.abspath(os.path.dirname(__file__))+'/projects'
 
-'''github token for authorization'''
-ACCESS_TOKEN='3bf1980a92c76ab069d301b058be93a78756d206'
+# Github token for authorization
+ACCESS_TOKEN='3c70cf072a9ebc2fa338618a9fb39a2b517a83b6'
+
+# Time format for git.
+TIME_FORMAT={
+			'GIT_LOG':'%c',
+			'GIT_API':'%Y-%m-%dT%H:%M:%SZ',
+			'INPUT':'%Y %m %d %H %M %S'
+			}
 
 

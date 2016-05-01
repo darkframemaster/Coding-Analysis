@@ -9,9 +9,8 @@ import re
 import tkinter
 import tkinter.simpledialog
 import tkinter.messagebox
-import gitTime
-import gitCount
-import time
+import gittime
+import gitcount
 
 ''' list with a scrollbar and a lable of lines in the list '''
 class myListBox(object):
@@ -121,7 +120,7 @@ class mainDialog(object):	#主窗体
 		self.buttonQuit=tkinter.Button(self.root,text='Quit',bg='gray',width=27,command=self.Quit)
 		self.buttonQuit.pack()
 		
-		#  初始化gitCount的变量
+		#  初始化gitcount的变量
 		self.st_time=None
 		self.ed_time=None
 		self.commit=None
@@ -134,17 +133,17 @@ class mainDialog(object):	#主窗体
 		if len(edTime)==0:
 			edTime=time.strftime('%Y %m %d %H %M %S',time.localtime())
 		
-		# 初始化gitCount的变量
-		self.st_time=gitTime.Time()
-		self.ed_time=gitTime.Time()
+		# 初始化gitcount的变量
+		self.st_time=gittime.Time()
+		self.ed_time=gittime.Time()
 		self.st_time.set_str(stTime)
 		self.ed_time.set_str(edTime)
 		if self.st_time.cmp_with(self.ed_time)==True:
 			tkinter.messagebox.showerror('git count','start time bigger than end time!')
 			return 
 		
-		self.comInfo=gitCount.Info()
-		self.user=gitCount.Coder()
+		self.comInfo=gitcount.Info()
+		self.user=gitcount.Coder()
 		self.comInfo.get_commit_dic(self.st_time,self.ed_time)
 		
 		self.user.collect_stats(self.comInfo.commit_dic)
@@ -162,11 +161,11 @@ class mainDialog(object):	#主窗体
 
 		if d.Get()!=None:
 			if len(d.Get()[0])!=0:
-				if gitTime.isTimeStr(d.Get()[0])==False:
+				if gittime.isTimeStr(d.Get()[0])==False:
 					tkinter.messagebox.showerror('git count','input time error in start time!')
 					return 
 			if len(d.Get()[1])!=0:
-				if gitTime.isTimeStr(d.Get()[1])==False:
+				if gittime.isTimeStr(d.Get()[1])==False:
 					tkinter.messagebox.showerror('git count','input time error in end time!')
 					return
 			self.Main(d.Get()[0],d.Get()[1])

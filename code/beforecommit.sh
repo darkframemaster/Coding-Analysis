@@ -1,5 +1,5 @@
 #!/bin/bash
-#run this script to commit
+# run this script to commit
 
 __author__='xuehao'
 information=${0}
@@ -11,9 +11,8 @@ fi
 
 if test ! -e projects
 then
-	echo "git commit -m ${information}"
+	echo "git add -all"
 	git add --all
-	git commit -m ${information}
 fi
 
 mv ~/projects .

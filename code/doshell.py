@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
-'''this script for operations do with shell'''
-'''for all the operarions done with shell,please add in here'''
+''' This script for operations do with shell.
+All the operarions done with shell should be added in here.
+'''
 
 __author__='xuehao'
 
