@@ -1,0 +1,15 @@
+##git command
+###git diff
+
+* `git diff --stat`
+	* `git diff --shortstat`
+* `git diff --dirstat`	#每个目录下的改变信息
+	* `git diff --dirstat=changes`
+	* `git diff --dirstat=lines`
+	* `git diff --dirstat=files`
+	
+
+
+###others
+`git whatchanged` #在每次的commit中，仓库有什么改变。
+

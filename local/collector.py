@@ -11,8 +11,8 @@ import sys
 import logging
 from datetime import datetime
 
-from config import TIME_FORMAT
-from doshell import Git
+from .config import TIME_FORMAT
+from .doshell import Git
 
 
 class Info(object):
@@ -46,9 +46,9 @@ class Info(object):
 
 		while(sha!=None):
 			if sha:
-				info = Git.log_next(sha)
+				info = Git.log_next(sha=sha)
 			else:
-				info = Git.log_one(sha)		
+				info = Git.log_one(sha=sha)		
 			try:	
 				sha = p_commit.search(info).group(1)
 				email = p_email.search(info).group(0)
@@ -112,7 +112,7 @@ class Coder(object):
 	def merge_filter(self,sha):
 		# Filter merge_filter: Ignore those commits that has 'Merge' mark.
 
-		title = Git.log_one(sha)
+		title = Git.log_one(sha=sha)
 		p_merge = re.compile("Merge")
 		if(p_merge.search(title) is not None):
 			return False
@@ -151,12 +151,12 @@ class Coder(object):
 			del_data = 0
 			sha = commit_dic[key][0]
 			time_diff = commit_dic[key][-1]
+			user = Git.show_format(format_='%an',sha=sha).strip(' \t\n\r')
 			
-			user = Git.show_format(('%an',sha)).strip(' \t\n\r')
-			if(sha == commit_dic[1][0]):
-				data = Git.diff_short((sha,""))
+			if(key == 1):
+				data = Git.diff_short(sha1=sha,sha2="")
 			else:
-				data = Git.diff_short((sha,sha+"^"))
+				data = Git.diff_short(sha1=sha,sha2=sha+"^")
 			
 			r_ins = p_ins.search(data)
 			r_del = p_del.search(data)
@@ -167,7 +167,7 @@ class Coder(object):
 				del_str = r_del.group(1)
 				del_data = int(del_str)
 
-			#########----------------------------how to calculate contribute----------------------------###########	
+			#########--------how to calculate contribute--------###########	
 			if(user in self.__user_stats):
 				stats = self.__user_stats[user]
 				stats['additions'] += ins_data

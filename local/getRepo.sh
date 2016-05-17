@@ -61,7 +61,7 @@ then
 		echo "empty repo!"
 	fi
 else
-	echo "initial failed!!!"
+	echo "initial failed!!!please try again later"
 fi
 
 cd ../..

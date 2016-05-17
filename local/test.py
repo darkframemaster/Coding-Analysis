@@ -4,7 +4,7 @@
 
 import os
 
-import config
+import ..config
 from doshell import Git
 
 
