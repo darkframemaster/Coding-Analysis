@@ -11,85 +11,11 @@ import sys
 import logging
 from datetime import datetime
 
-from .config import TIME_FORMAT
-from .doshell import Git
+from config import TIME_FORMAT
+from ..doshell import Git
 
 
-class Info(object):
-# Class Info:Collecting the informations of the commit in the local repo.
-
-	def __init__(self):
-		# Datastructure of commit_dic:
-		# {'id_bytime':[commit,time,email,diff]}
-		# 	
-		# Initial operations.
-		
-		self.__commit_dic={}				
-		self.__init_commit_dic()	
-
-	
-	''' @Non-public function '''
-	def __init_commit_dic(self):	
-		# Function get_commit_dic: Collecting all the commit's sha,commit's time
-		# ,committer's email,and the time between two commits	
-		# 
-		# Notice the last commit is the first to deal with
-
-		print('collecting commit data...')
-		p_commit = re.compile("commit (\w+)")
-		p_date = re.compile("Date:\s+(\S+ \S+ \S+ \S+ \S+)\s+(\S+)")
-		p_email = re.compile("<\S+@\S+>")
-		sha = ""
-		commit_list = []
-		time_list = []
-		email_list = []
-
-		while(sha!=None):
-			if sha:
-				info = Git.log_next(sha=sha)
-			else:
-				info = Git.log_one(sha=sha)		
-			try:	
-				sha = p_commit.search(info).group(1)
-				email = p_email.search(info).group(0)
-				time = datetime.strptime(p_date.search(info).group(1),TIME_FORMAT['GIT_LOG'])
-				commit_list.append(sha)
-				time_list.append(time)
-				email_list.append(email)			
-			except:
-				print("First commit")	
-				break
-	
-		if(len(commit_list) != len(time_list)!=len(user_email)):
-			logging.warning("Missing data in collecting!")
-
-		lenth=len(commit_list)
-		for i in range(0,lenth):
-			if i<lenth-1:
-				self.__commit_dic[lenth-i] = [commit_list[i], time_list[i], email_list[i], (time_list[i]-time_list[i+1]).total_seconds()]
-			else:
-				self.__commit_dic[lenth-i] = [commit_list[i], time_list[i], email_list[i],-1]
-
-		
-	def get_data_by_time(self,st_time,ed_time):
-		# Get data from st_time to ed_time 
-			
-		temp={}
-		for key in self.__commit_dic:
-			if(st_time <= self.__commit_dic[key][1] <= (ed_time)):
-					temp[key] = self.__commit_dic[key]	
-		return temp
-		
-  
-	def show_commit_dic(self):
-		for i in self.__commit_dic:
-			print(str(i)+": %s %s %s"%(self.__commit_dic[i][0],self.__commit_dic[i][1].__reStr__(),self.__commit_dic[i][2]))
-			
-	def get_commit_dic(self):
-		return self.__commit_dic
-	
-
-class Coder(object):	
+class UserInfo(object):	
 # class coder: Collecting user's informations.
 
 	def __init__(self):
@@ -215,20 +141,6 @@ class Coder(object):
 			print(i,': ',self.__user_stats[i])
 
 
-
 if __name__=='__main__':
-	#init time
-	st_time = datetime(2010,12,1,0,0,0)
-	ed_time = datetime(2016,7,1,0,0,0)
-	 
-	#init commit 
-	commit = Info()
-	temp = commit.get_data_by_time(st_time,ed_time)
 	
-	#init user info
-	user = Coder()
-	user.collect_stats(temp)
-	user.sort_coder()
-	user.show_users()	
-
-
+	

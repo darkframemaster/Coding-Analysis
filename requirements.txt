@@ -3,6 +3,14 @@ Development dependency.
 '''这个文件应该指明完整工程的所有依赖包: 测试, 编译和文档生成。
 如果你的工程没有任何开发依赖，或者你喜欢通过 setup.py 来设置，那么这个文件不是必须的'''
 
-ex: pip install modulename
+ex: for python3.*
 
-
+try:
+	pip3 install numpy
+	pip3 install matplotlib
+	pip3 install scipy
+	pip3 install PIL
+else:
+	sudo apt-get install python3-numpy,python3-matplotlib,python3-scipy
+	sudo apt-get build-dep python-imaging
+	sudo pip3 install PIL

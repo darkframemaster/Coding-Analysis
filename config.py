@@ -10,7 +10,7 @@ import sys
 
 
 # PROJECT_PATH: All the download projects's file save in ./projects. 
-PROJECTS_PATH=os.path.abspath(os.path.dirname(__file__))+'/projects'
+PROJECTS_PATH=os.path.abspath(os.path.dirname(__file__))+'/local/projects'
 
 # Github token for authorization
 ACCESS_TOKEN='3c70cf072a9ebc2fa338618a9fb39a2b517a83b6'

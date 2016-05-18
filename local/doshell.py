@@ -21,9 +21,8 @@ def get_repo(owner=None,repo_name=None):
 			if(os.system(command)==0):
 				return True
 			return False
-		except ValueError:
-			print('ValueError')
-			return False
+		except ValueError as e:
+			raise e
 
 
 
