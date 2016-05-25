@@ -15,68 +15,149 @@ from config import TIME_FORMAT
 from ..doshell import Git
 
 
-class CommitInfo(object):
+class RepoInfo(object):
 # Class Info:Collecting the informations of the commit in the local repo.
 
-	def __init__(self):
+	def __init__(self, ignore_commit=False, ignore_user=False):
 		# Datastructure of commit_dic:
 		# {'id_bytime':[commit,time,email,diff]}
-		# 	
-		# Initial operations.
-		
-		self.__commit_dic={}
+		#
+		# Datastructrue of __user_stats:
+		#  {'usr_name':{
+		#			'addtions':,
+		#			'deletions':,
+		#			'total':,
+		#			'commit times':,
+		#			'email':
+		#			}...
+		# }
+		self.__commit_dic = {}
+		self.__user_stats = {}
 				
-		self.__init_commit_dic()	
+		self.__init_data(ignore_commit, ignore_user)
 
-	
-	def __init_commit_dic(self):	
-		# Function get_commit_dic: Collecting all the commit's sha,commit's time
-		# ,committer's email,and the time between two commits	
+	''' Filters: Setting filters to ignore commits 
+	All filters should return False for ignoring the commit.	
+	'''
+	def __merge_filter(self,sha):
+		# Filter merge_filter: Ignore those commits that has 'Merge' mark.
+		# return True when ignore.
+
+		title = Git.log_one(sha=sha)
+		p_merge = re.compile("Merge")
+		if(p_merge.search(title) is not None):
+			return True
+		else:
+			return False	
+
+	def __get_info(self, sha, ignore_merge = False):
+		# Get the information of a commit. 
+		#
+		# Params: 
+		#	sha: Hash code of commit.
+		#	igonre_merge: If you want to ignore those merged commit
+		#			set this to True
+		# Return:
+		#	None: when ignore the commit
+		#	user,info: user for the committer of this commit
+		#			info for the information will be used to collect datas.
+		
+		if ignore_merge and self.__merge_filter(sha):
+			return None
+		else:	
+			user = Git.show_format(format_='%an',sha=sha).strip(' \t\n\r')
+			if sha != "": 
+				info = Git.log_next(sha = sha)				
+				info += Git.diff_short(sha1 = sha, sha2 = sha+"^")
+			else:
+				info = Git.log_one(sha = sha)
+				info += Git.diff_short(sha1 = sha, sha2 = "")
+			return user,info
+
+	def __save_user_data(self, user, email, ins_data, del_data):
+		# Save the data of the users
 		# 
-		# Notice the last commit is the first to deal with
+		# Params:
+		#	user: The committer's name
+		#	email: The committer's email
+		# 	ins_data: The addition of the code in this commit
+		# 	del_data: The deletion of the code in this commit
 
-		print('collecting commit data...')
+		if user in self.__user_stats:
+			stats = self.__user_stats[user]
+			stats['additions'] += ins_data
+			stats['deletions'] += del_data
+			stats['total'] += (ins_data + del_data)
+			stats['commit_times'] += 1
+			if email not in stats['email']:
+				stats['email'].append(email)
+			self.__user_stats[user] = stats
+		else:
+			new_stat = {'additions':ins_data, 
+						'deletions':del_data, 
+						'total':ins_data+del_data, 
+						'contribute':ins_data*0.7+del_data*0.3, 
+						'commit_times':1,
+						'email':[email]
+						}
+			self.__user_stats[user] = new_stat
+
+	def __save_commit_data(self, id_num, sha, time):
+		# Save the data of the commit
+		#
+		# Params:
+		#	id_num: The commit id from 1 to commit_times.
+		#			(The last commit should be 1)
+		#	sha: The hash code of the commit
+		#	time: The time of the commit
+
+		self.__commit_dic[id_num] = [sha, time]
+	
+	def __init_data(self, ignore_commit, ignore_user):	
+		# Function get_commit_dic: 
+		# Init all the datas.
+
+		print('collecting commit datas...')
 		p_commit = re.compile("commit (\w+)")
 		p_date = re.compile("Date:\s+(\S+ \S+ \S+ \S+ \S+)\s+(\S+)")
 		p_email = re.compile("<\S+@\S+>")
-		sha = ""
-		commit_list = []
-		time_list = []
-		email_list = []
+		p_ins = re.compile("(\d+) insertion")
+		p_del = re.compile("(\d+) deletion")
 
-		while(sha!=None):
-			if sha:
-				info = Git.log_next(sha=sha)
-			else:
-				info = Git.log_one(sha=sha)		
+		sha = ""
+		id_num = 0
+		
+		while(sha is not None):
+			ins_data = 0
+			del_data = 0
+			user,info = self.__get_info(sha)  
 			try:	
 				sha = p_commit.search(info).group(1)
 				email = p_email.search(info).group(0)
 				time = datetime.strptime(p_date.search(info).group(1),TIME_FORMAT['GIT_LOG'])
-				commit_list.append(sha)
-				time_list.append(time)
-				email_list.append(email)			
-			except:
+				r_ins = p_ins.search(info)
+				r_del = p_del.search(info)
+				if r_ins is not None:
+					ins_data = int(r_ins.group(1))
+				if r_del is not None:
+					del_data = int(r_del.group(1))
+				
+				if not ignore_commit:
+					id_num += 1
+					self.__save_commit_data(id_num, sha, time)	
+				if not ignore_user:
+					self.__save_user_data(user, email, ins_data, del_data)
+			except Exception as error:
+				logging.warning(error)
 				print("First commit")	
 				break
-	
-		if(len(commit_list) != len(time_list)!=len(user_email)):
-			logging.warning("Missing data in collecting!")
-
-		lenth=len(commit_list)
-		for i in range(0,lenth):
-			if i<lenth-1:
-				self.__commit_dic[lenth-i] = [commit_list[i], time_list[i], email_list[i], (time_list[i]-time_list[i+1]).total_seconds()]
-			else:
-				self.__commit_dic[lenth-i] = [commit_list[i], time_list[i], email_list[i],-1]
 
 	
 	def get_commit_dic(self):
-		"""
-			Use this function to get self.__commit_dic.
-		"""
 		return self.__commit_dic
-
+	
+	def get_user_stats(self):
+		return self.__user_stats
 
 	def get_data_by_time(self, st_time, ed_time):
 		"""
@@ -134,10 +215,22 @@ class CommitInfo(object):
 			Return:
 				None
 		"""
-
 		for i in self.__commit_dic:
 			print(str(i)+": %s %s %s"%(self.__commit_dic[i][0], \
 				self.__commit_dic[i][1].__reStr__(),self.__commit_dic[i][2]))
+
+	def show_users(self):
+		"""
+			Use this function to show up all the elements in 
+			self.__user_stats.
+			
+			Params:
+				Not require.
+			Return:
+				None
+		"""
+		for user in self.__user_stats:
+			print(i,': ',self.__user_stats[user])
 
 
 

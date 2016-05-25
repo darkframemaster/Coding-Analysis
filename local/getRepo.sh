@@ -62,6 +62,7 @@ then
 	fi
 else
 	echo "initial failed!!!please try again later"
+	exit -1
 fi
 
 cd ../..
