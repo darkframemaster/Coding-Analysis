@@ -17,7 +17,7 @@ def get_repo(owner=None,repo_name=None):
 		return False
 	else:
 		try:
-			command='./getRepo.sh '+str(owner)+" "+str(repo_name)
+			command='./downloadRepo.sh '+str(owner)+" "+str(repo_name)
 			if(os.system(command)==0):
 				return True
 			return False

@@ -2,6 +2,8 @@
 
 __author__='xuehao'
 
+import threading
+
 import pylab
 import matplotlib.pyplot as plt
 
@@ -24,7 +26,8 @@ class Draw(object):
 		pylab.hist(data, buckets)
 		pylab.xlabel(x_label)
 		pylab.ylabel(y_label)
-		pylab.show()
+		pic = threading.Thread(target = pylab.show())
+		pic.start()
 
 	@classmethod
 	def explode(cls, data=[], explode=[], labels=(), title='a graph'):
@@ -47,7 +50,9 @@ class Draw(object):
 		pylab.title(title)
 		pylab.pie(data, explode = explode, labels = labels,
 			autopct = '%1.1f%%', startangle = 0)
-		pylab.show()
+		
+		pic = threading.Thread(target = pylab.show())
+		pic.start()
 
 	@classmethod
 	def scatter(cls, data1=[], data2=[], color='indigo', alpha=0.3, edgecolors='white', label='label'):
@@ -67,7 +72,8 @@ class Draw(object):
 			plt.scatter(data1, data2, color = color, alpha = alpha, 
 				edgecolors = edgecolors, label = label)
 			plt.legend()
-			plt.show()
+			pic = threading.Thread(plt.show())
+			pic.start()
 		else:
 			raise ValueError("x and y must be the same size")
 				

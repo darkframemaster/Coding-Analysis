@@ -3,7 +3,7 @@
 
 __author__='xuehao'
 
-import logging;logging.basicConfig(level=logging.WARNING)
+import logging;logging.basicConfig(level=logging.info)
 import json
 import requests
 from datetime import datetime
@@ -11,49 +11,21 @@ from datetime import datetime
 from config import ACCESS_TOKEN,TIME_FORMAT
 
 
-class GitApiSpider(object):
+class RepoApi(GitApi):
 	'''	
 	name:GIT: yourgitname/reponame
 	start_url: commits
 	data={'sha': {'committer':{'name':name,'email':email,'date':date}}...}
 	user_stats={'user':{}}
 	'''		
-
 	def __init__(self,user='',repo=''):
 		self.__name='GIT:'+user+'/'+repo		
 		self.__start_url='https://api.github.com/repos/%s/%s/commits'%(user,repo)
 		self.__data={'__name__':self.__name}
 		self.__user_stats={'__name__':self.__name}
-		logging.info('INITIAL OF %s'%self.__name)
+		logging.warning('INITIAL OF %s'%self.__name)
 		self.__getBaseData()
 
-	# Non-public functions
-	'''
-	返回一个响应头和网页内容
-	[head,html.text]
-	'''
-	def __getSource(self,url='',params={'access_token':ACCESS_TOKEN}):
-		if url=='':
-			url=self.__start_url
-		if params!=None:
-			html=requests.get(url,params=params)
-		else:
-			html=requests.get(url)
-		head=html.headers
-		return [head,json.loads(html.text)]
-
-
-	'''
-	接收一个response头作为参数
-	剩余的api访问次数是否为0，返回True可以继续访问api
-	'''
-	def __isRemain(self,head):
-		print(head['X-RateLimit-Remaining'])
-		if head['X-RateLimit-Remaining']=='0':
-			print(head)
-			return False
-		return True
-	
 
 	'''
 		getBaseData:api中获取/repos/user/repo/commits的基本信息
@@ -147,9 +119,9 @@ class GitApiSpider(object):
 
 
 	def show(self):
-		#print('---------------------data-------------------------')
-		#for i in self.__data:
-		#	print(self.__data[i])
+		print('---------------------data-------------------------')
+		for i in self.__data:
+			print(self.__data[i])
 		print('---------------------stats------------------------')
 		for i in self.__user_stats:
 			print(self.__user_stats[i])	
