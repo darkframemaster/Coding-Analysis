@@ -11,7 +11,8 @@ import sys
 import logging
 from datetime import datetime
 
-from config import TIME_FORMAT
+from config import TIME_FORMAT,PROJECT_NAME
+import mongodb
 from ..doshell import Git
 
 
@@ -21,77 +22,54 @@ class Collector(object):
 	def __init__(self):
 		"""
 		# Datastructure of commit_dic:
-		# {'id_bytime':[commit,time,email,diff]}
+		# {...,sha:{'commit':{'name': ,'email': ,'time': },...}
 		#
 		# Datastructrue of __user_stats:
-		# {'usr_name':{
-		#			'addtions':,
-		#			'deletions':,
-		#			'total':,
-		#			'contributes':,
-		#			'commit times':,
-		#			'email':
-		#			}...
-		# }
-		#
-		#	
-		# self.__commit_dic and self.user_stats save all the information
-		# of the repo.
-		#
-		# self.__user_stats_tmp should has the same structure as 
-		# self.__user_stats and normally it is a part of it.
+		# {...
+		# 'usr_name':{
+		#		'stats':{'addtions':,'deletions':,'total':,'commit times':},
+		#		'email': 
+		#		},
+		# ...}
 		"""
-		self.__user_stats_tmp = {}
-
+		self.name = PROJECT_NAME
 		self.__commit_dic = {}
 		self.__user_stats = {}
-		
-		self.__init_commit_dic()	
-		self.__user_stats = self.collect_user_stats(self.__commit_dic)
+				
 
-	def __init_commit_dic(self):	
-		# Function get_commit_dic: 
-		# Collecting all the commit's sha,commit's time,committer's email	
-		# 
-		# Notice the last commit is the first to deal with
-
-		print('collecting commit data...')
-		p_commit = re.compile("commit (\w+)")
-		p_date = re.compile("Date:\s+(\S+ \S+ \S+ \S+ \S+)\s+(\S+)")
-		p_email = re.compile("<\S+@\S+>")
-		sha = ""
-		commit_list = []
-		time_list = []
-		email_list = []
-
-		while(sha != None):
-			if sha:
-				info = Git.log_next(sha=sha)
+	def __merge_filter(self,info):
+		# Filter merge_filter: Ignore those commits that has 'Merge' mark.
+		# return True when ignore.
+		if sha:
+			p_merge = re.compile("Merge")
+			if(p_merge.search(info) is not None):
+				logging.warning('Merge commit!')
+				return True
 			else:
-				info = Git.log_one(sha=sha)		
-			try:	
-				sha = p_commit.search(info).group(1)
-				email = p_email.search(info).group(0)
-				time = datetime.strptime(p_date.search(info).group(1),TIME_FORMAT['GIT_LOG'])
-				commit_list.append(sha)
-				time_list.append(time)
-				email_list.append(email)			
-			except Exception as error:
-				logging.warning("First commit!")
-				logging.warning(error)
-				break
+				return False	
+		return False
 
-		lenth=len(commit_list)
-		for i in range(0,lenth):
-			if i<lenth-1:
-				self.__commit_dic[lenth-i] = [commit_list[i], 
-									time_list[i],
-									email_list[i],
-									(time_list[i]-time_list[i+1]).total_seconds()]
-			else:
-				self.__commit_dic[lenth-i] = [commit_list[i], time_list[i], email_list[i],-1]
+	def __get_info(self, sha):
+		# Get the information of a commit. 
+		#
+		# Params: 
+		#	sha: Hash code of commit.
+		#	igonre_merge: If you want to ignore those merged commit
+		#			set this to True
+		# Return:
+		#	user,info: user for the committer of this commit
+		#			info for the information will be used to collect datas.
+			
+		user = Git.show_format(format_='%an',sha=sha).strip(' \t\n\r')
+		if sha != "": 
+			info = Git.log_next(sha = sha)				
+			stats = Git.diff_short(sha1 = sha, sha2 = sha+"^")
+		else:
+			info = Git.log_one(sha = sha)
+			stats = Git.diff_short(sha1 = sha, sha2 = "")
+		return user,info[:200],stats
 
-	def __save_user_data(self, user, email, ins_data, del_data):
+	def __save_user(self, user, email, ins_data, del_data):
 		# Save the data of the users
 		# 
 		# Params:
@@ -100,70 +78,108 @@ class Collector(object):
 		# 	ins_data: The addition of the code in this commit
 		# 	del_data: The deletion of the code in this commit
 
-		if user in self.__user_stats_tmp:
-			stats = self.__user_stats_tmp[user]
-			stats['additions'] += ins_data
-			stats['deletions'] += del_data
-			stats['total'] += (ins_data + del_data)
-			stats['commit_times'] += 1
+		if user in self.__user_stats:
+			stats = self.__user_stats[user]
+			stats['stats']['additions'] += ins_data
+			stats['stats']['deletions'] += del_data
+			stats['stats']['total'] += (ins_data + del_data)
+			stats['stats']['commit_times'] += 1
 			if email not in stats['email']:
 				stats['email'].append(email)
-			self.__user_stats_tmp[user] = stats
+			self.__user_stats[user] = stats
 		else:
-			new_stat = {'additions':ins_data, 
-						'deletions':del_data, 
-						'total':ins_data+del_data, 
-						'contribute':ins_data*0.7+del_data*0.3, 
-						'commit_times':1,
+			new_stat = {'stats':{'additions':ins_data, 
+								'deletions':del_data, 
+								'total':ins_data+del_data, 
+								'commit_times':1},
 						'email':[email]
 						}
-			self.__user_stats_tmp[user] = new_stat
-	
+			self.__user_stats[user] = new_stat
 
-	def collect_user_stats(self,commit_dic):
-		"""
-		# Function collect_stats: 
-		# Collecting user's information from the commit_dic.
-		# 
-		# The information includes:
-		# additions,deletions,total codelines,commit times,email.
-		# 
+	def __save_commit(self, sha, user, time, email):
+		# Save the data of the commit
+		#
 		# Params:
-		#	commit_dic: Any dict has the same struct of self.__commit_dic
-
-		Normally the function should use like this:
-			info = Collector()
-			commits = info.get_dic_by_time(st_time,ed_time) 
-			data = info.collect_user_stats(commits)	
+		#	sha: The hash code of the commit
+		#	user: The user who make the commit
+		#	time: The time of the commit
+		#	email: The email of the user
+		new_commit = {}
+		new_commit['committer'] = {'name':user,'email':email,'time':time}  
+		self.__commit_dic[sha] = new_commit
+	
+	def __save_in_mongo(self):
+		# Save the data in mongodb after init
+		# 
+		# Database is named by PROJECT_NAME
+		# Collections for commits and users are named as 'commit' and 'user'
+		 
+		db = mongodb.Db(PROJECT_NAME)
+		db.drop_commit()
+		db.drop_user()
+		for key in  self.__commit_dic:
+			commit = {'sha':key,
+					'committer':self.__commit_dic[key]['committer']}
+			db.save_commit(commit)
+		for key in self.__user_stats:
+			user = {'name':key,
+					'email':self.__user_stats[key]['email'],
+					'stats':self.__user_stats[key]['stats']}
+			db.save_user(user)
+				
+	
+	def init_data(self, *, ignore_merge=False,  save_in_mongo=False):	
 		"""
-		print("collecting user's data...")
+		Init all the datas of commits and users
+			
+		Params:
+		key params:
+			ignore_merge (False): Set this to True to ignore those merge commits.
+			save_in_mongo (False): Set this to True to save the datas to mongodb. 
+		
+		Return:
+			None
+		"""
+
+		print('collecting commit datas...')
+		p_commit = re.compile("commit (\w+)")
+		p_date = re.compile("Date:\s+(\S+ \S+ \S+ \S+ \S+)\s+(\S+)")
+		p_email = re.compile("<\S+@\S+>")
 		p_ins = re.compile("(\d+) insertion")
 		p_del = re.compile("(\d+) deletion")
+
+		sha = ""
+		id_num = 0
 		
-		for key in commit_dic:	
+		while(sha is not None):
+			# print(sha)
 			ins_data = 0
 			del_data = 0
-			sha = commit_dic[key][0]
-			email = commit_dic[key][2]
-			user = Git.show_format(format_='%an',sha=sha).strip(' \t\n\r')
+			
+			user,info,stats = self.__get_info(sha)
+			try:	
+				sha = p_commit.search(info).group(1)
+				if ignore_merge and __is_merge(info):
+					continue
+				email = p_email.search(info).group(0)
+				time = datetime.strptime(p_date.search(info).group(1),TIME_FORMAT['GIT_LOG'])
+				r_ins = p_ins.search(stats)
+				r_del = p_del.search(stats)
+				if r_ins is not None:
+					ins_data = int(r_ins.group(1))
+				if r_del is not None:
+					del_data = int(r_del.group(1))
+				self.__save_user(user, email, ins_data, del_data)
+				self.__save_commit(sha, user, time, email)
+			except Exception as error:
+				logging.warning(error)
+				print("First commit")	
+				break
+		if save_in_mongo:
+			self.__save_in_mongo()
 
-			if(key == 1):
-				data = Git.diff_short(sha1=sha,sha2="")
-			else:
-				data = Git.diff_short(sha1=sha,sha2=sha+"^")
-			
-			r_ins = p_ins.search(data)
-			r_del = p_del.search(data)
-			if(r_ins is not None):
-				ins_str = r_ins.group(1)
-				ins_data = int(ins_str)
-			if(r_del is not None):
-				del_str = r_del.group(1)
-				del_data = int(del_str)
-			self.__save_user_data(user, email, ins_data, del_data)			
-		return self.__user_stats_tmp
-			
-	def get_dic_by_time(self, st_time, ed_time):
+	
+	def get_commits_by_time(self, st_time, ed_time):
 		"""
 			Use this function to get a part of the data from 
 			self.__commit_dic from st_time to ed_time.
@@ -172,24 +188,36 @@ class Collector(object):
 				datetime st_time: Start from st_time. 
 				datetime ed_time: End by ed_time.
 			Return:
-				dict data: part of the self.__commit_dic.
-				Single element structure of data should be: 
-				{index:[commit, time, email, diff]} 
-			Example:
-				time1 = datetime(2000,1,1)
-				time2 = datetime.now()
-				commits = get_dic_by_time(time1, time2)
+				tmp: part of the self.__commit_dic.
 		"""
 			
 		if not isinstance(st_time,datetime) or not isinstance(ed_time,datetime):
 			raise TypeError("st_time and ed_time require for datetime type.")
  
-		data={}
+		tmp={}
 		for key in self.__commit_dic:
-			if(st_time <= self.__commit_dic[key][1] <= ed_time):
-					data[key] = self.__commit_dic[key]	
-		return data
-		
+			cur_time = self.__commit_dic[key]['committer']['time']
+			if(st_time <= cur_time <= ed_time):
+					tmp[key] = self.__commit_dic[key]	
+		return tmp
+
+	def get_commit_by_user(self, username):
+		"""
+			Get the commit made by user named 'username'
+			
+			Params:
+				username: The name of the user.
+			Return:
+				tmp: A part of the self.__commit_dic.
+		"""
+		if username:
+			tmp = {}
+			for key in self.__commit_dic:
+				if self.__commit_dic['committer']['name'] == username:
+					tmp[key] = self.__commit_dic[key]
+			return tmp	
+		else:
+			return {}
 
 	def get_time_list(self, st_time, ed_time):
 		"""
@@ -201,36 +229,24 @@ class Collector(object):
 				datetime ed_time: End by ed_time.
 			Return:
 				list time_list: all elements should be datetime instance.
-			Example:
-				time1 = datetime(2000,1,1)
-				time2 = datetime.now()
-				commits = get_time_list(time1, time2)
 		"""
+
 		if not isinstance(st_time,datetime) or not isinstance(ed_time,datetime):
 			raise TypeError("st_time and ed_time require for datetime type.")
 		
 		time_list=[]
 		for key in self.__commit_dic:
-			if(st_time <= self.__commit_dic[key][1] <= ed_time):
-					time_list.append(self.__commit_dic[key][1])	
+			cur_time = self.__commit_dic[key]['committer']['time']
+			if(st_time <= cur_time <= ed_time):
+					time_list.append(cur_time)	
 		return time_list
 
-	def show_commits(self):
-		for i in self.__commit_dic:
-			print(str(i)+": %s %s %s"%(self.__commit_dic[i][0], \
-				self.__commit_dic[i][1].__reStr__(),self.__commit_dic[i][2]))
 
-	def show_users(self):
-		for i in self.__user_stats:
-			print(i,': ',self.__user_stats[i])
-
-	def get_commit_dic(self):
+	def get_commits(self):
 		return self.__commit_dic
-
-	def get_user_stats(self):
+	
+	def get_users(self):
 		return self.__user_stats
-
-
 
 
 

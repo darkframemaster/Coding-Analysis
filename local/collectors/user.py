@@ -11,7 +11,8 @@ import sys
 import logging
 from datetime import datetime
 
-from config import TIME_FORMAT
+from config import TIME_FORMAT,PROJECT_NAME
+import mongodb
 from ..doshell import Git
 
 
@@ -31,29 +32,18 @@ class UserInfo(object):
 		#			}...
 		# }
 		'''
+		self.repo_name = PROJECT_NAME
 		self.__user_stats={}		
-	
-	def merge_filter(self,sha):
-		# Filter merge_filter: Ignore those commits that has 'Merge' mark.
-		title = Git.log_one(sha=sha)
-		p_merge = re.compile("Merge")
-		if(p_merge.search(title) is not None):
-			return False
-		else:
-			return True
 
-	def time_filter(self,diff,limit=3600):
-		# Filter time_filter: Ignore those commits that commit in a shot time
-		# Param limit is setting for the shot time range.
-		print(type(diff))
-		if(diff==-1 or diff==-1):
-			return False			
-		elif(diff<limit):
-			return False
-		else:
-			print('Time')
-			return True
-
+	def __save_in_mongo(self):
+		db = mongodb.Db(PROJECT_NAME)
+		db.drop_user()
+		for key in self.__user_stats:
+			user = {'name':key,
+					'email':self.__user_stats[key]['email'],
+					'stats':self.__user_stats[key]['stats']}
+			db.save_user(user)
+			
 
 	def __save_user_data(self, user, email, ins_data, del_data):
 		# Save the data of the users
@@ -66,25 +56,24 @@ class UserInfo(object):
 
 		if user in self.__user_stats:
 			stats = self.__user_stats[user]
-			stats['additions'] += ins_data
-			stats['deletions'] += del_data
-			stats['total'] += (ins_data + del_data)
-			stats['commit_times'] += 1
+			stats['stats']['additions'] += ins_data
+			stats['stats']['deletions'] += del_data
+			stats['stats']['total'] += (ins_data + del_data)
+			stats['stats']['commit_times'] += 1
 			if email not in stats['email']:
 				stats['email'].append(email)
 			self.__user_stats[user] = stats
 		else:
-			new_stat = {'additions':ins_data, 
-						'deletions':del_data, 
-						'total':ins_data+del_data, 
-						'contribute':ins_data*0.7+del_data*0.3, 
-						'commit_times':1,
+			new_stat = {'stats':{'additions':ins_data, 
+								'deletions':del_data, 
+								'total':ins_data+del_data, 
+								'commit_times':1},
 						'email':[email]
 						}
 			self.__user_stats[user] = new_stat
 	
 
-	def collect_user_stats(self,commit_dic):
+	def init_users(self, commit_dic, *, save_in_mongo=False):
 		"""
 		# Function collect_stats: 
 		# Collecting user's information from the commit_dic.
@@ -97,8 +86,8 @@ class UserInfo(object):
 
 		Normally the function should use like this:
 			info = Collector()
-			commits = info.get_dic_by_time(st_time,ed_time) 
-			data = info.collect_user_stats(commits)	
+			commits = info.get_commits_by_time(st_time,ed_time) 
+			data = info.init_users(commits)	
 		"""
 		print("collecting user's data...")
 		p_ins = re.compile("(\d+) insertion")
@@ -107,11 +96,11 @@ class UserInfo(object):
 		for key in commit_dic:	
 			ins_data = 0
 			del_data = 0
-			sha = commit_dic[key][0]
-			email = commit_dic[key][2]
+			sha = commit_dic[key]['sha']
+			email = commit_dic[key]['email']
 			user = Git.show_format(format_='%an',sha=sha).strip(' \t\n\r')
 
-			if(key == 1):
+			if(key == 0):
 				data = Git.diff_short(sha1=sha,sha2="")
 			else:
 				data = Git.diff_short(sha1=sha,sha2=sha+"^")
@@ -125,8 +114,12 @@ class UserInfo(object):
 				del_str = r_del.group(1)
 				del_data = int(del_str)
 			self.__save_user_data(user, email, ins_data, del_data)
+		
+		if save_in_mongo:
+			self.__save_in_mongo()
+ 
 
-	def get_user_stats(self):
+	def get_users(self):
 		return self.__user_stats
 
 	def show_users(self):
