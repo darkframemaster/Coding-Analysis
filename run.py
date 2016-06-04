@@ -18,14 +18,13 @@ class Test(object):
 		#st_time=datetime(2015,1,1)
 		#ed_time=datetime.now()	
 		info=CommitInfo()
-		info.init_commits(merge_filter=True)
+		info.init_commits()
 		data = info.get_commits()
 		#print(len(info.get_commits()))
 		#data=info.get_commits_by_time(st_time,ed_time)
 		
 		user=UserInfo()	
 		user.init_users(data)
-		user.show_users()
 		'''
 		data=[x.month for x in info.get_time_list(st_time,ed_time)]
 		Draw.hist(data=data,buckets=12,x_label='month',y_label='commit times/month')
@@ -47,11 +46,11 @@ class Test(object):
 	@classmethod
 	def test_repo_collector(cls):
 		info = Collector()
-		info.init_data(save_in_mongo=True)
+		info.init_data()
 	
 	@classmethod
 	def test_gitapi(cls):
-		'''Using gitapi.gitspider to collecto data from gitapi.
+		'''Using gitapi.gitspider to collect data from gitapi.
 		'''
 		test = RepoApi(user='darkframemaster', repo='Coding-Analysis')
 		test.show()

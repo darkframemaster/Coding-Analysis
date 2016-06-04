@@ -10,10 +10,9 @@ from config import ACCESS_TOKEN,TIME_FORMAT
 from .urlhandler import GitApi
 
 
-
-class RepoApi(GitApi):
+class CommitApi(GitApi):
 		
-	def __init__(self,user,repo):
+	def __init__(self, *, user, repo):
 		'''
 		__init__ func.
 			
@@ -66,8 +65,8 @@ class RepoApi(GitApi):
 				self.__user_stats[committer]['stats']['total']+=new_stats['total']
 				self.__user_stats[committer]['stats']['deletions']+=new_stats['deletions']
 				self.__user_stats[committer]['stats']['additions']+=new_stats['additions']	
-				if email not in self.__user_stats['email']:
-					self.__user_stats['email'].append(email)
+				if email not in self.__user_stats[committer]['email']:
+					self.__user_stats[committer]['email'].append(email)
 			else:
 				new_user={}
 				new_user['committer'] = committer
@@ -86,8 +85,8 @@ class RepoApi(GitApi):
 			logging.info('Initial of %s'%self.name)
 			logging.info('Getting commits data from %s'% self.__start_url)
 
-			head,page_info = self.get_source(self.__start_url)
-			if self.is_remain(head):
+			page_info = self.get_source(self.__start_url)
+			if page_info:
 				self.__crawl_commits(page_info)
 				return True
 			else:
@@ -97,10 +96,10 @@ class RepoApi(GitApi):
 		self.__user_stats={}
 		for sha in self.__commit_dic:
 			next_url=self.__start_url+'/'+sha
-			logging.info('Getting user data from %s'% next_url)
+			logging.info('Getting users data from %s'% next_url)
 			
-			head,page_info = self.get_source(next_url) 
-			if self.is_remain(head):
+			page_info = self.get_source(next_url) 
+			if page_info:
 				self.__crawl_users(page_info)
 			else:
 				return False
@@ -112,10 +111,10 @@ class RepoApi(GitApi):
 			time=datetime.strptime(self.__commit_dic[sha]['committer']['date'],TIME_FORMAT['GIT_API'])	
 			if st_time <= time <= ed_time:
 				next_url=self.__start_url+'/'+sha
-				logging.info('Getting user data from %s'% next_url)
+				logging.info('Getting users data from %s'%next_url)
 			
-				head,page_info = self.get_source(next_url) 
-				if self.is_remain(head):
+				page_info = self.get_source(next_url) 
+				if page_info:
 					self.__crawl_users(page_info)
 				else:
 					return False
