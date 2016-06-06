@@ -5,6 +5,7 @@ __author__='xuehao'
 import logging;logging.basicConfig(level=logging.INFO)
 
 from .urlhandler import GitApi
+from .decorators import get_source
 
 # Some url cannot be found in gitapi v3,They are not concerned: 
 #   keys_url
@@ -22,7 +23,7 @@ class RepoApi(GitApi):
 		# assignees_url :The users who contribute to the repo.
 		# contents_url :The information about the files in the repo.
 		
-		self.__base_url = 'https://api.github.com/repos/{username}/{reponame}'
+		self.__base_url = 'https://api.github.com/repos/{user_name}/{repo_name}'
 		self.__urls = {
 			'forks_url':self.__base_url + '/forks',
 			'collaborators_url':self.__base_url + '/collaborators',
@@ -34,14 +35,14 @@ class RepoApi(GitApi):
 			'git_refs_url':self.__base_url + '/git/refs{sha}',
 			'trees_url':self.__base_url + '/git/trees/{sha}',
 			'statuses_url':self.__base_url + '/statuses/{sha}',
-			'language_url':self.__base_url + '/languages',
+			'languages_url':self.__base_url + '/languages',
 			'stargazers_url':self.__base_url + '/stargazers',
 			'contributors_url':self.__base_url + '/contributors',
 			'subscribers_url':self.__base_url + '/subscribers',
 			'subscription_url':self.__base_url + '/subscription',
 			'commits_url':self.__base_url + '/commits{sha}',
 			'comments_url':self.__base_url + '/comments{number}',
-			'issue_comment_url':self.__base_url + '/issues/commens{number}'
+			'issue_comment_url':self.__base_url + '/issues/commens{number}',
 			'contents_url':self.__base_url + '/contents/{path}',
 			'compare_url':self.__base_url + '/{base}...{head}',
 			'merges_url':self.__base_url + '/merges',
@@ -52,25 +53,38 @@ class RepoApi(GitApi):
 			'milestones_url':self.__base_url + '/milestones{number}',
 			'labels_url':self.__base_url + '/labels{number}',
 			'releases_url':self.__base_url + '/releases{id}',
-			'deployments_url':self.__base_url + 'deployments'
+			'deployments_url':self.__base_url + '/deployments'
 			}
 
-	def __change_name_format(self, user_name, repo_name):
-		user_name = ''.join(user_name.split())
-		repo_name = '-'.join(repo_name.split())
-		return user_name, repo_name
-		
+	@get_source
 	def get_repo(self, *, user_name='', repo_name=''):
-		if user_name and repo_name:
-			user_name,repo_name = self.__change_name_format(user_name,repo_name)
-			url = self.__base_url.format(username = user_name, \
-									reponame = repo_name)		
-			logging.info('Get repo data from %s'%url)
-			return self.get_source(url)
-		else:
-			return None
+		url = self.__base_url.format(user_name = user_name, \
+									repo_name = repo_name)		
+		return url,"repo's data"
 
+	@get_source
+	def get_forks(self, *, user_name='', repo_name=''):
+		url = self.__urls['forks_url'].format(user_name = user_name, \
+									repo_name = repo_name)
+		return url,"repo's forks"
 
+	@get_source
+	def get_languages(self, *, user_name='', repo_name=''):		
+		url = self.__urls['languages_url'].format(user_name = user_name, \
+									repo_name = repo_name)
 
+		return url,"repo's languages"
+
+	@get_source
+	def get_stargazers(self, *, user_name='', repo_name=''):
+		url = self.__urls['stargazers_url'].format(user_name = user_name, \
+									repo_name = repo_name)
+		return url,"repo's stargazers"
+
+	@get_source
+	def get_contributors(self, *, user_name='', repo_name=''):
+		url = self.__urls['contributors_url'].format(user_name = user_name, \
+									repo_name = repo_name)
+		return url,"repo's contributors"
 	
 	
