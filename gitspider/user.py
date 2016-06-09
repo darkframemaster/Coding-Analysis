@@ -55,7 +55,7 @@ class UserApi(GitApi):
 		"""
 			Return a list of the user's followings.
 		"""
-		url = self.__urls['followings_url'].format(user_name = user_name,
+		url = self.__urls['following_url'].format(user_name = user_name,
 			other_user = other_user if not other_user else '/'+other_user)
 		return url,"user's followings"
 

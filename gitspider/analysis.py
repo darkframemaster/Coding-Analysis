@@ -2,6 +2,8 @@
 
 description = '''
 	In this script, we use gitapi to crawling a user's data.
+	Just by giving user_name we can giving a analysis file.
+
 	Including:
 
 	 	1.Base infomation:
@@ -46,4 +48,42 @@ description = '''
 
 		Using the last two part to analysis what kind of things the
 		user prefer doing.		
+	
 '''
+
+extend = '''
+	If user is new in github and in coding.
+	We can provide a suggestion file for the user by using the
+ 	search api for repo and org.
+	Just by known the kind of skills the user want to master.
+'''
+
+from .user import UserApi
+from .repo import RepoApi
+
+class User():
+	def __init__(self, *, user_name):
+		self.user_name = user_name
+		self.basic_info = None
+		# List objects.
+		self.repos = None
+		self.following = None
+		self.stared = None
+
+	def get_data(self):
+		user_api = UserApi()
+	
+		self.basic_info = user_api.get_user(user_name = self.user_name)
+		self.repos = user_api.get_repos(user_name = self.user_name)
+		self.following = user_api.get_following(user_name = self.user_name)
+		self.stared = user_api.get_starred(user_name = self.user_name)
+		
+		# For each repo get languages info.
+		for repo in self.repos:
+			params = {'user_name':self.user_name,'repo_name':repo['name']}
+			repo_api = RepoApi()
+			repo['languages'] = repo_api.get_languages(**params)
+
+	
+
+
