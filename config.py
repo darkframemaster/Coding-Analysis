@@ -20,8 +20,8 @@ PROJECTS_PATH = os.path.abspath(os.path.dirname(__file__))+'/local/projects'
 # API part
 # API for authentication
 # Github token for authorization
-ACCESS_TOKEN = '17abdeb721a6016b4c6ab3a4884e437f70c70713'
-#CLIENT_ID = '9ccbc60de523f3be5091'
+ACCESS_TOKEN = ''
+#CLIENT_ID = ''
 #CLIENT_SECRET = ''
 #FINGERPRINT = ''
 
