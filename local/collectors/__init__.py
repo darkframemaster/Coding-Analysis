@@ -3,7 +3,6 @@
 import os
 import logging
 
-import mongodb
 from config import PROJECTS_PATH,PROJECT_NAME
 
 

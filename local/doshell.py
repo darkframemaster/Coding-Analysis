@@ -33,7 +33,7 @@ def os_popen(func):
 	def wrapper(cls,**kw):
 		new_kw={}
 		for key in kw:
-			if key in ['sha','format_']:
+			if key in ['sha','format_','sha1','sha2']:
 				new_kw[key]=kw[key]
 
 		cmd=func(cls, **new_kw)
@@ -47,25 +47,25 @@ class Git(object):
 	#"git log" for listing out commit data	
 	@classmethod	
 	@os_popen
-	def log_one(cls,sha=''):
+	def log_one(cls, *, sha=''):
 		cmd='git log -1 {sha}'.format(sha=sha)
 		return cmd
 
 	@classmethod
 	@os_popen
-	def log_next(cls,sha=''):
+	def log_next(cls, *, sha=''):
 		cmd='git log -1 {sha}^'.format(sha=sha)
 		return cmd
 
 	@classmethod
 	@os_popen
-	def show_format(cls,format_='%an', sha=''):
+	def show_format(cls, *, format_='%an', sha=''):
 		cmd='git show -s --format={format_} {sha}'.format(format_=format_, sha=sha)
 		return cmd
 	
 	@classmethod
 	@os_popen
-	def diff_short(cls,sha1='',sha2=''):
+	def diff_short(cls, *, sha1='',sha2=''):
 		cmd='git diff --shortstat {sha1} {sha2}'.format(sha1=sha1,sha2=sha2)
 		return cmd	
 

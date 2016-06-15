@@ -4,11 +4,11 @@
 import timeit
 from datetime import datetime
 
-from local.collectors.commit import CommitInfo
-from local.collectors.user import UserInfo
-from local.collectors.repo import Collector
+#from local.collectors.commit import CommitInfo
+#from local.collectors.user import UserInfo
+from local.analysis import Analysis
 from local.visualize import Draw
-from gitspider.repohandler import RepoApi
+#from gitspider.repohandler import RepoApi
 
 class Test(object):
 	@classmethod
@@ -44,10 +44,11 @@ class Test(object):
 		'''
 	
 	@classmethod
-	def test_repo_collector(cls):
-		info = Collector()
-		info.init_data()
-	
+	def test_Analysis(cls):
+		ana = Analysis()
+		print(ana.sort_users())
+		print(ana.repo_level())
+		
 	@classmethod
 	def test_gitapi(cls):
 		'''Using gitapi.gitspider to collect data from gitapi.
@@ -56,8 +57,8 @@ class Test(object):
 		test.show()
 
 if __name__=='__main__':
-	print(timeit.timeit('Test.test_collector()','from run import Test',number=1))
-	print(timeit.timeit('Test.test_repo_collector()','from run import Test',number=1))
+	#print(timeit.timeit('Test.test_collector()','from run import Test',number=1))
+	print(timeit.timeit('Test.test_Analysis()','from run import Test',number=1))
 	#Test.test_collector()
 	#Test.test_gitapi()
 

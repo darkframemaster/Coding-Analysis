@@ -12,26 +12,42 @@ import logging
 from datetime import datetime
 
 from config import TIME_FORMAT,PROJECT_NAME
-import mongodb
+from . import mongodb
 from ..doshell import Git
 
+
+"""
+	If you have a repo include a dir '.git' then you can use this script to
+	get the datas of a repo.
+	
+	Check class Collector to find out what datas can you get.
+"""
 
 class Collector(object):
 # Class Info:Collecting the informations of the commit in the local repo.
 
-	def __init__(self):
+	def __init__(self, st_time = None, ed_time = None):
 		"""
 		# Datastructure of commit_dic:
 		# {...,sha:{'commit':{'name': ,'email': ,'time': },...}
 		#
 		# Datastructrue of __user_stats:
-		# {...
+		# {...,
 		# 'usr_name':{
-		#		'stats':{'addtions':,'deletions':,'total':,'commit times':},
-		#		'email': 
-		#		},
-		# ...}
+		#	'stats'{'addtions':,
+		#			'deletions':,
+		#			'total':,
+		#			'actual':,
+		#			'commit_times':},
+		#	'email':[one@one.com, two@two.com, ...] 
+		#	},	...}
 		"""
+		if isinstance(st_time, datetime) and isinstance(ed_time, datetime):
+			self.st_time = st_time
+			self.ed_time = ed_time
+		else:
+			self.st_time = None
+			self.ed_time = None
 		self.name = PROJECT_NAME
 		self.__commit_dic = {}
 		self.__user_stats = {}
@@ -40,14 +56,13 @@ class Collector(object):
 	def __merge_filter(self,info):
 		# Filter merge_filter: Ignore those commits that has 'Merge' mark.
 		# return True when ignore.
-		if sha:
-			p_merge = re.compile("Merge")
-			if(p_merge.search(info) is not None):
-				logging.warning('Merge commit!')
-				return True
-			else:
-				return False	
-		return False
+
+		p_merge = re.compile("Merge")
+		if(p_merge.search(info) is not None):
+			logging.warning('Merge commit!')
+			return True
+		else:
+			return False	
 
 	def __get_info(self, sha):
 		# Get the information of a commit. 
@@ -83,6 +98,7 @@ class Collector(object):
 			stats['stats']['additions'] += ins_data
 			stats['stats']['deletions'] += del_data
 			stats['stats']['total'] += (ins_data + del_data)
+			stats['stats']['actual'] += (ins_data - del_data)
 			stats['stats']['commit_times'] += 1
 			if email not in stats['email']:
 				stats['email'].append(email)
@@ -91,6 +107,7 @@ class Collector(object):
 			new_stat = {'stats':{'additions':ins_data, 
 								'deletions':del_data, 
 								'total':ins_data+del_data, 
+								'actual':ins_data-del_data,
 								'commit_times':1},
 						'email':[email]
 						}
@@ -104,6 +121,7 @@ class Collector(object):
 		#	user: The user who make the commit
 		#	time: The time of the commit
 		#	email: The email of the user
+
 		new_commit = {}
 		new_commit['committer'] = {'name':user,'email':email,'time':time}  
 		self.__commit_dic[sha] = new_commit
@@ -113,7 +131,8 @@ class Collector(object):
 		# 
 		# Database is named by PROJECT_NAME
 		# Collections for commits and users are named as 'commit' and 'user'
-		 
+
+		logging.info('Save repo ' + PROJECT_NAME + ' info in MongoDB!')		 
 		db = mongodb.Db(PROJECT_NAME)
 		db.drop_commit()
 		db.drop_user()
@@ -151,55 +170,41 @@ class Collector(object):
 		sha = ""
 		id_num = 0
 		
-		while(sha is not None):
+		while True:
 			# print(sha)
 			ins_data = 0
 			del_data = 0
 			
 			user,info,stats = self.__get_info(sha)
-			try:	
-				sha = p_commit.search(info).group(1)
-				if ignore_merge and __is_merge(info):
+			if ignore_merge and __is_merge(info):
 					continue
+			try:
+				sha = p_commit.search(info)
+				if sha is None:		
+					break					
+				else:	
+					sha = sha.group(1)
+
+				time_text = p_date.search(info).group(1)
+				time = datetime.strptime(time_text, TIME_FORMAT['GIT_LOG'])
+				if self.st_time and self.ed_time and \
+				(time < st_time or time > ed_time):
+					continue
+
 				email = p_email.search(info).group(0)
-				time = datetime.strptime(p_date.search(info).group(1),TIME_FORMAT['GIT_LOG'])
 				r_ins = p_ins.search(stats)
 				r_del = p_del.search(stats)
 				if r_ins is not None:
 					ins_data = int(r_ins.group(1))
 				if r_del is not None:
-					del_data = int(r_del.group(1))
+					del_data = int(r_del.group(1))		
 				self.__save_user(user, email, ins_data, del_data)
 				self.__save_commit(sha, user, time, email)
 			except Exception as error:
-				logging.warning(error)
-				print("First commit")	
-				break
+				raise error	
 		if save_in_mongo:
 			self.__save_in_mongo()
 
-	
-	def get_commits_by_time(self, st_time, ed_time):
-		"""
-			Use this function to get a part of the data from 
-			self.__commit_dic from st_time to ed_time.
-			
-			Params:
-				datetime st_time: Start from st_time. 
-				datetime ed_time: End by ed_time.
-			Return:
-				tmp: part of the self.__commit_dic.
-		"""
-			
-		if not isinstance(st_time,datetime) or not isinstance(ed_time,datetime):
-			raise TypeError("st_time and ed_time require for datetime type.")
- 
-		tmp={}
-		for key in self.__commit_dic:
-			cur_time = self.__commit_dic[key]['committer']['time']
-			if(st_time <= cur_time <= ed_time):
-					tmp[key] = self.__commit_dic[key]	
-		return tmp
 
 	def get_commit_by_user(self, username):
 		"""

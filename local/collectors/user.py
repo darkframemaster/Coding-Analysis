@@ -12,7 +12,7 @@ import logging
 from datetime import datetime
 
 from config import TIME_FORMAT,PROJECT_NAME
-import mongodb
+from . import mongodb
 from ..doshell import Git
 
 
