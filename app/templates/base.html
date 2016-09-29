@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+{% if title %}
+	<title>{{title}}</title>
+{% else %}
+	<title>SIOS</title>
+{% endif %}
+<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+<link href="../static/css/base.css" rel="stylesheet">
+<link href="../static/css/aboutus.css" rel="stylesheet">
+<link href="../static/css/normal.css" rel="stylesheet">
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+</head>
+
+<body data-spy="scroll" data-target="#myScrollspy">
+	<!--	headerbg starts		-->
+	<div id="top-top" class="headerbg">
+		<!-- header starts -->
+		<div class="header">
+			<!-- container starts -->
+			<div class="container">
+				<div class="logo">
+						<a href="{{ url_for('index') }}">SIOS</a>
+				</div>
+				<!-- top menu starts -->
+				<div class="top_menu">
+					<ul>
+						<li><a href="{{ url_for('local') }}">Local</a></li>
+						<li><a href="{{ url_for('aboutus') }}">AboutUs</a></li>
+						<li><a href="../static/LICENSE.txt">License</a></li>
+					</ul>
+				</div>
+				<!--	top menu ends	-->
+				<div class="clear"></div>
+			</div>
+			<!--	container ends	-->
+		</div>
+		<!--	header ends	-->
+	</div>
+	<!--	Headerbg ends	-->
+
+
+
+	<div class="main-body">
+	<div class="tag-page">
+		
+	</div>
+	{% block content %}{% endblock %}
+	</div>
+
+
+
+	<!--	FOOTER Starts	-->
+	<div  id="Contact" class="footer-bg">
+		<div class="footer">
+		<div class="container">
+			<div class="footer-section text-center">
+				<h2><span> </span>CONTACT<span> </span></h2>
+			</div>
+			<div class="row"> 
+				<div class="col-md-6">
+					<div class="footer-left">
+						<div class="social-icons">
+							<a href="http://darkframemaster.github.io"><img height="50px" weight="50px" src="../static/images/GitHub.svg.png" /></a>
+							<a href="https://github.com/darkframemaster"><img height="30px" weight="30px" src="../static/images/Facebook.svg.png" /></a>
+							<a href="https://github.com/darkframemaster"><img height="30px" weight="30px" src="../static/images/jianshu.svg.png"></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<p class="return_to_git"><a class="return_to_git" href="https://github.com/darkframemaster">.. Darkframexue ..</a></p>
+		<a class="up scroll" href="#top-top"><span> </span></a>
+		</div>
+	</div>
+	<!-- FOOTER END -->
+</body>
+</html> 

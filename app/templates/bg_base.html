@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	{% if title %}
+		<title>{{title}}</title>
+	{% else %}
+		<title>Welcome to  SIOS</title>
+	{% endif %}
+	<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../static/css/bg_base.css" rel="stylesheet">
+	<script src="../static/js/jquery.min.js"></script>
+	<script src="../static/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+	<div class="main-body">
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+.normal{
+	margin: 40px 40px 40px 40px;
+	text-align:center;
+}
+.normal p{
+	color: #aaa;
+	font-size: 1.2em;
+	font-width: 800;
+}
+.normal form{
+	margin:20px 0 20px 0;
+	text-align:center;
+}
+.normal label{
+	margin: 0 10px 0 10px;
+	color: #aaa;
+	font-size:1em;
+	font-width: 800;
+}
+.normal button{
+	margin-left: 20px;
+}
+.table-responsive table td{
+	color: #aaa;
+}
+.table-responsive table td.title{
+	color: #555;
+}
+img.avatar{
+	height: 100px;
+}
+
+
+
+/*------ Right body STARTS---------*/
+.List{
+	margin: 20px 20px 40px 60px;
+	padding: 0px 20px 10px 20px;
+	text-align:left;
+	background:#222;
+}
+.header-section h2{
+	color: #aaa;
+	font-size: 1.5em;	
+	font-weight: 400;	/* width of a char*/
+	margin-top: 0em;	
+	padding: 1em 0 0.8em;
+	margin: 0;
+}
+.header-section span{
+	background: #8C868A;
+	height:1px;
+	width:20%;
+	display:inline-block;
+	vertical-align:middle;
+}
+.header-section span:nth-child(1){
+	margin-right:10px;
+}
+.header-section span:nth-child(2){
+	margin-left:10px;
+}
+.members{
+	margin-bottom:1em;
+}
+.members a.title{
+	color: #fff;
+	margin-top: 10px;
+	font-size: 1.2em;
+	font-weight: 800;
+}
+.member a.title:hover{
+	color: #333;
+	text-decoration:none;
+}
+.members p.tag{
+	color: #999;
+	padding-top: 0.5em;
+	line-height: 1.5em;
+	font-weight: 800;
+	margin: 0 auto;
+}
+.members p.value{
+	color: #ddd;
+}
+.members a{
+	text-align: center;
+	color:#fff;
+	font-size: 1em;
+	margin-top: 0.3em;
+}
+.members a:hover{
+	color:#333;
+	text-decoration:none;
+}
+/*----- Right body end -------*/

@@ -1,0 +1,21 @@
+body{
+	background: url(../images/welcome.jpg);
+	background-size: auto;
+	margin: 0 0 0 0;
+}
+.main-body{
+	padding-top: 40px;
+	text-align: center;
+}
+.welcome a{
+	font-size: 2.0em;
+	font-weight: bolder;
+	color: #fff;
+	position:absolute;
+	left: 5%;
+	bottom: 5%;
+}
+.welcome a:hover{
+	color: #333;
+}
+

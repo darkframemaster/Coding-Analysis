@@ -1,0 +1,40 @@
+/*---- email and  phone ----*/
+
+p.aboutus{
+	margin-top:10px;
+	text-align:left;
+	color:#fff;
+	font-size:1em;
+	font-weight: 500;
+}
+h3.aboutus{
+	text-align:left;
+	margin-top: 30px;
+	color: #fff;
+	font-size: 1.5em;
+	font-weight: 800;
+}
+img.aboutus{
+	margin: 10px 0 0 0;
+}
+a.hireable{
+	text-align:left;
+	color: green;
+	font-size: 1.2em;
+	font-weight: 800;
+}
+a.hireable:hover{
+	color:#111;
+	text-decoration:none;
+}
+a.contact{
+	margin-right: 30px;
+	color:#111;
+	font-size: 1em;
+	font-weight: 800;
+}
+a.contact:hover{
+	color:#fff;
+	text-decoration:none;
+}
+

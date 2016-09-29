@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style type="text/css">
+/*----- LEFT MENU START----- */
+ul.nav-tabs{
+        width: 140px;
+        margin-top: 20px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+}
+ul.nav-tabs li{
+        margin: 0;
+        border-top: 1px solid #ddd;
+}
+ul.nav-tabs li:first-child{
+        border-top: none;
+        padding: 10px 1px;
+}
+ul.nav-tabs li img{
+        height: 100px;
+        padding: 3px 20px 3px 20px;
+}
+ul.nav-tabs li a{
+        margin: 0;
+        padding: 8px 16px;
+        border-radius: 0;
+}
+ul.nav-tabs li.active a, ul.nav-tabs li.active a:hover{
+        color: #fff;
+        background: #0088cc;
+        border: 1px solid #0088cc;
+}
+ul.nav-tabs li:first-child a{
+        border-radius: 4px 4px 0 0;
+}
+ul.nav-tabs li:last-child a{
+  border-radius: 0 0 4px 4px;
+}
+ul.nav-tabs.affix{
+        top: 30px; /* Set the top position of pinned element */
+}
+/*-----LEFT MENU END-------*/
+</style>
+
+
+
+<!-- Main body start -->
+<div class="container">
+	<div class="row">
+		<!--  Left Menu  -->
+		<div class="col-xs-2" id="myScrollspy">
+		<div class="response">
+		    <ul class="nav nav-tabs nav-stacked" data-spy="affix" data-offset-top="125">
+		        <li class="active"><a href="#users">contributors</a></li>
+		        <li><a href="#repo_data">repo data</a></li>
+		        <li><a href="#user_rank">contributor rank</a></li>
+				<li><a href="#visualize">visualize</a></li>
+			</ul>
+		</div>
+		</div>
+		<!-- Left menu end -->
+
+
+	
+
+		<!-- Right Body start -->
+		<div class="col-xs-10">
+			<div class="normal">
+				<p>Analysis your local repo!</p>
+				<form method="post" class="form-inline" role="form">
+					{{ form.hidden_tag() }}
+				<div class="form-group">
+					{{ form.searching(class="form-control", placeholder="input the repo's name") }}
+				</div>
+				<button type="submit" class="btn btn-danger">Analysis</button>
+				</form>
+			</div>
+			{% for message in get_flashed_messages() %}
+			<div class="alert alert-warning">
+			<a href="#" class="close" data-dismiss="alert">
+			&times;
+			</a>
+			<strong>{{ message }}</strong>
+			</div>
+			{% endfor %}
+
+
+			<!--		Contributor part		-->
+			<div class="List" id="users">
+				<div class="header-section text-center">
+					<h2><span> </span>Contributors<span> </span></h2>
+				</div>
+				<div class="members">
+				{% for key in users %}
+					<p class="tag">{{ users[key] }} :</p>
+					<p class="value">{{ key }}</p>
+				{% endfor %}
+				</div>
+			</div>
+			<!--		Repo Data part		-->
+			<div class="List" id="repo_data">
+				<div class="header-section text-center">
+					<h2><span> </span>Repo Data<span> </span></h2>
+				</div>
+				<div class="members">
+				{% for key in repo_data %}
+					{% if key=='max_contributor' %}
+						<p class="tag">{{ key }}:</p>
+						{% for contents in repo_data['max_contributor'] %}
+						<p class="value">{{contents}}:  {{ repo_data[key][contents] }}</p>
+						{% endfor %}
+						
+					{% elif key=='best_10' %}
+						<p class="tag">{{ key }}:</p>
+						{% for user in repo_data['best_10'] %}
+						<p class="value">{{ user }}</p>
+						<br>
+						{% endfor %}
+					{% else %}
+					<p class="tag">{{ key }} :</p>
+					<p class="value">{{ repo_data[key] }}</p>
+					{% endif %}
+				{% endfor %}
+				</div>	
+			</div>
+			<!--		Contributors Rank Part		-->
+			<div class="List" id="user_rank">
+				<div class="header-section text-center">
+					<h2><span> </span>Contributors Rank<span> </span></h2>
+				</div>
+			
+				<div class="members">
+				{% for each_user in user_rank %}
+					<p class="value">{{ each_user }}</p>
+				{% endfor %}
+				</div>
+			</div>			
+			<!--		Visulization Part		-->
+			<div class="List" id="visualize">
+				<div class="header-section text-center">
+					<h2><span></span>Visualization<span></span></h2>
+				</div>
+
+				<div class="members">
+				{% for each_type in picture_locations %}
+					<p>{{each_type}}</p>
+					{% for each_picture in picture_locations[each_type]	%}
+						<img src="{{each_picture}}" />
+					{% endfor %}
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+		<!-- Right Body end -->
+	</div>
+</div>
+<!-- Main body end -->
+
+{% endblock %}
