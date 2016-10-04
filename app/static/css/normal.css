@@ -20,16 +20,17 @@
 .normal button{
 	margin-left: 20px;
 }
+
 .table-responsive table td{
-	color: #aaa;
+	color: #888;
 }
 .table-responsive table td.title{
 	color: #555;
 }
 img.avatar{
 	height: 100px;
+	width: 100px;
 }
-
 
 
 /*------ Right body STARTS---------*/
@@ -37,12 +38,12 @@ img.avatar{
 	margin: 20px 20px 40px 60px;
 	padding: 0px 20px 10px 20px;
 	text-align:left;
-	background:#222;
+	background:#333;
 }
 .header-section h2{
 	color: #aaa;
 	font-size: 1.5em;	
-	font-weight: 400;	/* width of a char*/
+	font-weight: 300;	/* width of a char*/
 	margin-top: 0em;	
 	padding: 1em 0 0.8em;
 	margin: 0;
@@ -63,34 +64,22 @@ img.avatar{
 .members{
 	margin-bottom:1em;
 }
-.members a.title{
-	color: #fff;
-	margin-top: 10px;
-	font-size: 1.2em;
-	font-weight: 800;
-}
-.member a.title:hover{
-	color: #333;
-	text-decoration:none;
-}
 .members p.tag{
-	color: #999;
+	color: #777;
 	padding-top: 0.5em;
 	line-height: 1.5em;
-	font-weight: 800;
+	font-weight: 300;
 	margin: 0 auto;
 }
 .members p.value{
-	color: #ddd;
+	color: #eee;
+}
+.members p.text{
+	color: #eee;
+	text-align: center;
 }
 .members a{
-	text-align: center;
-	color:#fff;
-	font-size: 1em;
-	margin-top: 0.3em;
-}
-.members a:hover{
-	color:#333;
-	text-decoration:none;
+	color: #aaa;
+	font-size: 1.2em;
 }
 /*----- Right body end -------*/

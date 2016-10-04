@@ -1,0 +1,20 @@
+.stage{
+	margin: 20px 40px 20px 40px;
+	padding: 20px 40px 20px 40px;
+	background-color: #222;
+	text-align: left;
+}
+.stage a{
+	font-size: 2.0em;
+	font-weight: 300;
+	color: #aaa;
+}
+.stage a:hover{
+	color: #444;
+	text-decoration: none;
+}
+.stage p{
+	font-size: 1.3em;
+	font-weight: 100;
+	color: #eee;
+}

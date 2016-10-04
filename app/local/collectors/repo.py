@@ -123,7 +123,8 @@ class Collector(object):
 		#	email: The email of the user
 
 		new_commit = {}
-		new_commit['committer'] = {'name':user,'email':email,'time':time}  
+		new_commit['committer'] = {'name':user,'email':email}
+		new_commit['time'] = {'datetime':time, 'str':str(time)}
 		self.__commit_dic[sha] = new_commit
 	
 	def __save_in_mongo(self):
@@ -171,11 +172,12 @@ class Collector(object):
 		id_num = 0
 		
 		while True:
-			# print(sha)
 			ins_data = 0
 			del_data = 0
 			
 			user,info,stats = self.__get_info(sha)
+			print(user, info, stats)
+			
 			if ignore_merge and __is_merge(info):
 					continue
 			try:
@@ -185,18 +187,17 @@ class Collector(object):
 				else:	
 					sha = sha.group(1)
 
-				import locale
-				print(locale.getlocale())	
 				time_text = p_date.search(info).group(1)
-				#print(time_text)
 				time = datetime.strptime(time_text, TIME_FORMAT['GIT_LOG'])
 				if self.st_time and self.ed_time and \
 				(time < st_time or time > ed_time):
 					continue
 
-				email = p_email.search(info).group(0)
-				r_ins = p_ins.search(stats)
+				email = p_email.search(info)
+				r_ins = p_ins.search(stats) 
 				r_del = p_del.search(stats)
+			
+				email = 'empty' if not email else email.group(0)
 				if r_ins is not None:
 					ins_data = int(r_ins.group(1))
 				if r_del is not None:
@@ -238,7 +239,7 @@ class Collector(object):
 				all elements should be datetime instance.
 		"""
 
-		time_list=[self.__commit_dic[key]['committer']['time'] \
+		time_list=[self.__commit_dic[key]['time']['datetime'] \
 				for key in self.__commit_dic]
 		return time_list
 

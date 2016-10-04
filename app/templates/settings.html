@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="normal">
+	<p>Analysis your local repo!</p>
+	<form method="post" class="form-inline" role="form">
+		{{ form.hidden_tag() }}
+		<div class="form-group">
+			{{ form.searching(class="form-control", placeholder="input the repo's name") }}
+		</div>
+		<button type="submit" class="btn btn-danger">Analysis</button>
+	</form>
+</div>
+
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning">
+	<a href="#" class="close" data-dismiss="alert">
+	&times;
+	</a>
+	<strong>{{ message }}</strong>
+</div>
+{% endfor %}
+
+{% endblock %}
+

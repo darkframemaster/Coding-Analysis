@@ -1,0 +1,6 @@
+## About the css style files
+
+* `base.css`: The sytles use for the header and footer in templates `base.html`.
+* `index.css`: The styles use for the `index.html` page
+* `aboutus.css`: The styles use for the `aboutme.html` page
+* `normal.css`: The styles use for the contents of other pages

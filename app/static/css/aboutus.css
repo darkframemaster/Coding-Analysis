@@ -17,24 +17,14 @@ h3.aboutus{
 img.aboutus{
 	margin: 10px 0 0 0;
 }
-a.hireable{
+a.aboutus{
 	text-align:left;
-	color: green;
-	font-size: 1.2em;
-	font-weight: 800;
+	margin-right: 20px;
+	color: #999;
+	font-size: 1.1em;
+	font-weight: 300;
 }
-a.hireable:hover{
+a.aboutus:hover{
 	color:#111;
 	text-decoration:none;
 }
-a.contact{
-	margin-right: 30px;
-	color:#111;
-	font-size: 1em;
-	font-weight: 800;
-}
-a.contact:hover{
-	color:#fff;
-	text-decoration:none;
-}
-

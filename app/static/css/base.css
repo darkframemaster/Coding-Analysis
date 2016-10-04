@@ -26,7 +26,7 @@ nav.horizontal ul li{	display: inline-block;}/* horizontal menu */
 img{max-width:100%;}
 html,body{
 	font-family: 'Lato', sans-serif;
-	background: #333;
+	background: #222;
 }
 .clear{
 	clear:both;
@@ -83,9 +83,10 @@ body input[type="text"],body input[type="submit"],body textarea,body input[type=
 /*------ HEADER ENDS---------*/
 
 
+
 /*----- Main body start ------*/
 .main-body{
-	background: #333;
+	background: #222;
 	margin: 0 0 0 0;
 	padding:0px 40px 40px 40px;
 }
@@ -93,7 +94,6 @@ body input[type="text"],body input[type="submit"],body textarea,body input[type=
 	margin-bottom: 20px;
 }
 /*----- Main body end-------*/
-
 
 
 /*------FOOTER STARTS---------*/

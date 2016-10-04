@@ -1,37 +1,39 @@
-#Coding-Analysis
+#pyrepo
 A way to find data behind your repo.
+
+##About
+This is a tool use to analyse datas from git-repositories.
+
+It was developed using python and flask, but it is used as a local tool, since we just use flask to build the UI part.
+
+To use this tool to analyse your repo, you must have a .git folder and copy the folder to the `<path_to_pyrepo>/app/local/projects` directory.
 
 ###About the dirs.
 ```
-Coding-Analysis/        <-- 根目录
+pyrepo/
 |
-+- docs/                        <-- 文档
++- app/				<--Where the flask-related code located
+|	|
+|	+- local/
+|		|
+|		+- collectors/			<--Data collectors	
+|		|
+|		+- projects				<--Place to store your .git folder
 |
-+- gitspider/                      <-- gitapi数据采集脚本根目录
 |
-+- local/                       <-- 本地数据采集脚本根目录
-|  |
-|  +- collectors/           <-- 本地数据采集器
-|  |
-|  +- projects              <-- 本地repo
++- flask_config.py	<--This is the configuration for flask.
 |
-+- LICENSE                  <-- 代码LICENSE
++- docs/			<--related documents
 |
-+- requirements.txt     <-- 附加需求文档 
++- LICENSE
 |
-+- run.py                       <--列示代码
++- requirements.txt
+|
++- README.mkd
+|
++- setup.py(empty)
+|
++- Makefile(empty)
+|
+/
 ```
-
-###Example:
- Check `./run.py`.
- 
-###A few things you need care.
-For the first time of using the script , you need change some configurations in `Coding-Analysis/config.py`.
-
-1. The `ACCESS_TOKEN = your_access_token`, if you don't have one ,create it at your settings.
-2. The `PROJECT_NAME = your_local_pro_name`, check the dir `Coding-Analysis/local/projects` to see all the local repo.
-
-(You need to add the your local repo to `/Coding-Analysis/local/prejects` or downloading one by using the shell script `./local/downloadRepo.sh`)
-
-
- 

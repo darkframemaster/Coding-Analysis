@@ -1,6 +1,32 @@
 {% extends "bg_base.html" %}
 {% block content %}
-	<div class="welcome">
-		<a href={{ url_for('local') }}>Welcome to SIOS</a>
+<div class="stage">
+	<a href={{ url_for('settings') }}>Welcome to use pyrepo</a>
+	<br></br>
+	<div class="List">
+		<div class="header-section text-center">
+			<h2><span></span>About pyrepo<span></span></h2>
+		</div>
+		<div class="members">
+			<p class="text">This is a tool use to analyse datas from git-repositories. It is a local tool developed using python and flask.</p>
+		</div>
+		<div class="header-section text-center">
+			<h2><span></span>How to use<span></span></h2>
+		</div>
+		<div class="members">
+			<p class="text">1. You need to copy the <b>.git</b> directory in your git repository to the <b>[path_to_pyrepo]/app/local/projects</b> directory.</p>
+			<p class="text">2. Go to the root directory of pyrepo and run the script <b>run.py</b></p>
+			<p class="text">3. Open your web browser and visit <b>localhost:9999</b></p>
+			<p class="text">4. Enjoy it ^_^!</p>
+		</div>
+		<div class="header-section text-center">
+			<h2><span></span>Bug report<span></span></h2>
+		</div>
+		<div class="members">
+			<p class="text">If you find any bug please <a href={{ url_for('aboutus') }}>email us</a></p>
+			</br></br>
+			<p class="text">Now you can <a href={{ url_for('settings') }}>start -></p>
+		</div>
 	</div>
+</div>
 {% endblock %}
