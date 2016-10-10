@@ -61,6 +61,9 @@ def contributors():
 def commits():
 	global result
 
+	if 'commits' not in result:
+		flash('chose a repo!')
+		return redirect(url_for('settings'))
 	return render_template('commits.html',
 		title = "commits info",
 		commits = result['commits'])
@@ -68,7 +71,10 @@ def commits():
 @app.route('/report')
 def report():
 	global result
-
+	
+	if 'repo_data' and 'user_rank' not in result:
+		flash('chose a repo!')
+		return redirect(url_for('settings'))
 	return render_template("report.html",
 		title = "analysis result",
 		users = result['users'],
