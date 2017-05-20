@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<a type="button" class="btn btn-primary" href="{{ url_for('get_users_contributions', _external=True) }}">graph</a>
+<a type="button" class="btn btn-primary" href="{{ url_for('get_users_contributions', _external=True, return_json = true) }}">json</a>
 <div class="table-responsive">
 	<table class="table table-hover">
 	<thead>
@@ -16,19 +18,19 @@
 		{% for contributor in contributors %}
 		<tr>
 			<td>
-				{{ contributor }}
+				{{ contributor['name'] }}
 			</td>
 			<td>
-				{{ contributors[contributor]['email'][0] }}
+				{{ contributor['email'][0] }}
 			</td>
 			<td>
-				{{ contributors[contributor]['stats']['additions'] }}
+				{{ contributor['stats']['additions'] }}
 			</td>
 			<td>
-				{{ contributors[contributor]['stats']['deletions'] }}
+				{{ contributor['stats']['deletions'] }}
 			</td>
 			<td>
-				{{ contributors[contributor]['stats']['total'] }}
+				{{ contributor['stats']['total'] }}
 			</td>
 
 		</tr>

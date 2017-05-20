@@ -56,7 +56,7 @@ ul.nav-tabs.affix{
 		        <li class="active"><a href="#users">contributors</a></li>
 		        <li><a href="#repo_data">repo data</a></li>
 		        <li><a href="#user_rank">contributor rank</a></li>
-				<li><a href="#visualize">visualize</a></li>
+				<li><a href="{{ url_for('get_repo_data', _external=True, return_json = true) }}">json</a></li>
 			</ul>
 		</div>
 		</div>
@@ -64,7 +64,6 @@ ul.nav-tabs.affix{
 
 
 	
-
 		<!-- Right Body start -->
 		<div class="col-xs-10">
 
@@ -74,9 +73,9 @@ ul.nav-tabs.affix{
 					<h2><span> </span>Contributors<span> </span></h2>
 				</div>
 				<div class="members">
-				{% for key in users %}
-					<p class="tag">{{ users[key] }} :</p>
-					<p class="value">{{ key }}</p>
+				{% for user in users %}
+					<p class="tag">{{ user['email'] }} :</p>
+					<p class="value">{{ user }}</p>
 				{% endfor %}
 				</div>
 			</div>
@@ -113,26 +112,14 @@ ul.nav-tabs.affix{
 				</div>
 			
 				<div class="members">
-				{% for each_user in user_rank %}
-					<p class="value">{{ each_user }}</p>
+				{% for user in user_rank %}
+					<p class="value">
+						{{ user['user']['name'] }}: {{ user['contributions'] }}, {{ user['user']['stats'] }}
+					</p>
 				{% endfor %}
 				</div>
 			</div>			
-			<!--		Visulization Part		-->
-			<div class="List" id="visualize">
-				<div class="header-section text-center">
-					<h2><span></span>Visualization<span></span></h2>
-				</div>
 
-				<div class="members">
-				{% for each_type in picture_locations %}
-					<p>{{each_type}}</p>
-					{% for each_picture in picture_locations[each_type]	%}
-						<img src="{{each_picture}}" />
-					{% endfor %}
-				{% endfor %}
-				</div>
-			</div>
 		</div>
 		<!-- Right Body end -->
 	</div>

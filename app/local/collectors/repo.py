@@ -49,7 +49,7 @@ class Collector(object):
 			self.st_time = None
 			self.ed_time = None
 		self.repo_name = repo_name
-		self.__commit_dic = {}
+		self.__commit_dic = []
 		self.__user_stats = {}
 				
 
@@ -123,9 +123,10 @@ class Collector(object):
 		#	email: The email of the user
 
 		new_commit = {}
+		new_commit['sha'] = sha
 		new_commit['committer'] = {'name':user,'email':email}
 		new_commit['time'] = {'datetime':time, 'str':str(time)}
-		self.__commit_dic[sha] = new_commit
+		self.__commit_dic = [new_commit,] + self.__commit_dic
 	
 	def __save_in_mongo(self):
 		# Save the data in mongodb after init
@@ -165,8 +166,8 @@ class Collector(object):
 		p_commit = re.compile("commit (\w+)")
 		p_date = re.compile("Date:\s+(\S+ \S+ \S+ \S+ \S+)\s+(\S+)")
 		p_email = re.compile("<\S+@\S+>")
-		p_ins = re.compile("(\d+) insertion")
-		p_del = re.compile("(\d+) deletion")
+		p_del = re.compile("(\d+) insertion")
+		p_ins = re.compile("(\d+) deletion")
 
 		sha = ""
 		id_num = 0
@@ -221,8 +222,8 @@ class Collector(object):
 		"""
 		if username:
 			tmp = {}
-			for key in self.__commit_dic:
-				if self.__commit_dic['committer']['name'] == username:
+			for commit in self.__commit_dic:
+				if commit['committer']['name'] == username:
 					tmp[key] = self.__commit_dic[key]
 			return tmp	
 		else:
@@ -239,8 +240,8 @@ class Collector(object):
 				all elements should be datetime instance.
 		"""
 
-		time_list=[self.__commit_dic[key]['time']['datetime'] \
-				for key in self.__commit_dic]
+		time_list=[commit['time']['datetime'] \
+				for commit in self.__commit_dic]
 		return time_list
 
 
@@ -248,7 +249,9 @@ class Collector(object):
 		return self.__commit_dic
 	
 	def get_users(self):
-		return self.__user_stats
-
-
-
+		users = []
+		for user in self.__user_stats:
+			user_info = self.__user_stats[user]
+			user_info['name'] = user
+			users.append(user_info)
+		return users

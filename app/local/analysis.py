@@ -2,6 +2,7 @@
 
 import logging
 from functools import reduce
+from datetime import datetime
 
 from .collectors.repo import Collector
 from .visualize import Draw
@@ -29,17 +30,22 @@ class RepoAnalysis:
 
 
 	def contributors(self):
-		email_user = {}
+		email_user_dict = {}
 		for user in self.user_stats:
-			for email in self.user_stats[user]['email']:
-				if email in email_user.keys():
-					email_user[email].append(user)
+			for email in user['email']:
+				if email in email_user_dict.keys():
+					email_user_dict[email].append(user['name'])
 				else:
-					email_user[email] = [user]
-		return email_user
+					email_user_dict[email] = [user, ]
+
+		users = []
+		for email in email_user_dict:
+			info = {}
+			info['users'] = email_user_dict[email]
+			info['email'] = email
+			users.append(info)
+		return users
 				
-				
-			
 		
 	def repo_level(self):
 		'''
@@ -59,8 +65,7 @@ class RepoAnalysis:
 		if not self.__user_rank:
 			self.sort_users()
 	
-		actual_lines = [self.user_stats[user]['stats']['actual'] \
-						for user in self.user_stats]
+		actual_lines = [user['stats']['actual'] for user in self.user_stats]
 		total_lines = reduce(lambda x,y: x+y, actual_lines)
 		top_range = 10 if len(self.user_stats) >= 10 else len(self.user_stats) 
 		result = {
@@ -100,14 +105,17 @@ class RepoAnalysis:
 			A list of the user sort by contributions or mean value of
 			contributions, depends on the param 'by_mean_value'.
 		'''
+		if self.__user_rank:
+			return self.__user_rank
+
 		for user in self.user_stats:
-			additions = self.user_stats[user]['stats']['additions']
-			deletions = self.user_stats[user]['stats']['deletions']
-			total = self.user_stats[user]['stats']['total']
-			actual = self.user_stats[user]['stats']['actual']
-			commit_times = self.user_stats[user]['stats']['commit_times']
+			additions = user['stats']['additions']
+			deletions = user['stats']['deletions']
+			total     = user['stats']['total']
+			actual    = user['stats']['actual']
+			commit_times = user['stats']['commit_times']
 			if func is None:
-				contributions = (additions*0.6 + deletions*0.4 - total)
+				contributions = (additions*1.6 + deletions*1.4 - total)
 			else:
 				kw = {'commit_times': commit_times,
 					'additions': additions,
@@ -117,11 +125,10 @@ class RepoAnalysis:
 				contributions = func()		
 			mean_contributions = contributions/commit_times
 
-			self.__user_rank.append({'name':user,
+			self.__user_rank.append({
+						'user':user,
 						'contributions':contributions,
 						'mean_contributions':mean_contributions,
-						'stats':self.user_stats[user]['stats'],
-						'emails':self.user_stats[user]['email']
 						})
 		if by_mean_value:
 			self.__user_rank = sorted(self.__user_rank, 
@@ -131,6 +138,7 @@ class RepoAnalysis:
 			self.__user_rank = sorted(self.__user_rank,
 						key = lambda user:user['mean_contributions'],
 						reverse = True)
+		print(self.__user_rank)
 		return self.__user_rank
 	
 
@@ -144,6 +152,7 @@ class RepoAnalysis:
 		locations['scatter'] = self.__save_scatter()
 		return locations
 		
+
 	def __save_hist(self):
 
 		time_list = self.collector.get_time_list()		
@@ -165,16 +174,16 @@ class RepoAnalysis:
 		
 	def __save_explode(self):
 		
-		users_commits = [self.user_stats[user]['stats']['commit_times'] 
+		users_commits   = [user['stats']['commit_times'] 
 				for user in self.user_stats]
-		users_additions = [self.user_stats[user]['stats']['additions']
+		users_additions = [user['stats']['additions']
 				for user in self.user_stats]
-		users_deletions = [self.user_stats[user]['stats']['deletions']
+		users_deletions = [user['stats']['deletions']
 				for user in self.user_stats]
-		users_total = [self.user_stats[user]['stats']['total']
+		users_total     = [user['stats']['total']
 				for user in self.user_stats]
 		explode = [0.1 for user in self.user_stats]
-		users = [user for user in self.user_stats]
+		users   = [user['name'] for user in self.user_stats]
 
 		return 	self.draw.explode('users-commits', 
 			data = users_commits, explode = explode,
@@ -192,4 +201,43 @@ class RepoAnalysis:
 			
 	def __save_scatter(self):
 		return ()
+	
 
+	def get_repo_commit_times_count(self, year = datetime.now().year, month = datetime.now().month):
+		time_list = self.collector.get_time_list()
+		month_count = {}
+		day_count   = {}
+
+		for commit_time in time_list:
+			if year and commit_time.year == year:	
+				if commit_time.month in month_count.keys():
+					month_count[commit_time.month] += 1
+				else:
+					month_count[commit_time.month] = 1
+
+			if month and commit_time.month == month:
+				if commit_time.day in day_count.keys():
+					day_count[commit_time.day] += 1
+				else:
+					day_count[commit_time.day] = 1
+				
+		return dict(month_count = month_count, day_count = day_count)
+
+
+	def get_users_contributions_count(self, ):
+		users_commits   = [user['stats']['commit_times'] 
+				for user in self.user_stats]
+		users_additions = [user['stats']['additions']
+				for user in self.user_stats]
+		users_deletions = [user['stats']['deletions']
+				for user in self.user_stats]
+		users_total     = [user['stats']['total']
+				for user in self.user_stats]
+		users   = [user['name'] for user in self.user_stats]
+		return dict(
+					users = users,
+					commit = users_commits,
+					addition = users_additions,
+					deletion = users_deletions,
+					total = users_total,
+				)

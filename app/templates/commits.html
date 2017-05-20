@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
+
+<a type="button" class="btn btn-primary" href="{{ url_for('get_commit_times_by_time', _external=True, year=2016, return_json = true) }}">json</a>
 <div class="table-responsive">
 	<table class="table table-hover">
 	<thead>
 		<tr>
-			<td>commit sha</td>
 			<td>committer</td>
+			<td>committer email</td>
 			<td>commit time</td>
 		</tr>
 	</thead>
 	<tbody>
 		{% for commit in commits %}
 		<tr>
-			<td>{{ commit }}</td>
-			<td>{{ commits[commit]['committer']['name'] }}</td>
-			<td>{{ commits[commit]['time']['str'] }}</td>
+			<td>{{ commit['committer']['name'] }}</td>
+			<td>{{ commit['committer']['email'] }}</td>
+			<td>{{ commit['time']['str'] }}</td>
 		</tr>
 		{% endfor %}
 	</tbody>
