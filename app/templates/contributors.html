@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<a type="button" class="btn btn-primary" href="{{ url_for('get_users_contributions', _external=True) }}">graph</a>
-<a type="button" class="btn btn-primary" href="{{ url_for('get_users_contributions', _external=True, return_json = true) }}">json</a>
+<a type="button" class="btn btn-primary" href="{{ url_for('users_contributions', _external=True) }}">graph</a>
+<a type="button" class="btn btn-primary" href="{{ url_for('users_contributions', _external=True, return_json = true) }}">json</a>
 <div class="table-responsive">
 	<table class="table table-hover">
 	<thead>
