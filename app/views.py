@@ -139,7 +139,7 @@ def get_commit_times_by_time():
 
 
 @app.route('/users/contributions')
-def get_users_contributions():
+def users_contributions():
 	global repo_ana
 	
 	if not repo_ana:
