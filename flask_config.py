@@ -8,4 +8,4 @@ DEBUG = True
 # Flask-WTF config
 ## Since the project is work in local enviorment, so it is ok to set your SECRET_KET the way you like
 CSRF_ENABLED = True
-SECRET_KEY = 'darkframe.xuehao.940810.you_guess'
+SECRET_KEY = 'your_own_secret_key'
