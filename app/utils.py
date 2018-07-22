@@ -2,4 +2,5 @@
 
 import json
 
-def json_response()
+def json_response():
+  pass
